@@ -1,0 +1,25 @@
+.container {
+  height: 80vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  border: 0.2em solid rgba(0, 0, 0, 0.1);
+  border-top: 0.2em solid black;
+  border-radius: 50%;
+  width: 2.28571429rem;
+  height: 2.28571429rem;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

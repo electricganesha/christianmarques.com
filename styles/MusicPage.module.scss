@@ -1,0 +1,125 @@
+.wrapper {
+  width: 100%;
+  background-color: rgba(0, 0, 0, .6);
+
+  @media screen and (min-width: 768px) { 
+    background-size: cover;
+    height: 100vh;
+    background-position: center;
+  }
+}
+
+.project {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow-y: scroll;
+
+  &__container {
+    margin-top: 0;
+    text-align: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    overflow-y: scroll;
+
+    @media screen and (min-width: 768px) {
+      margin-top: 280px;
+    }
+
+    a {
+      border-bottom: 1px solid white;
+    }
+
+    a:hover {
+      color: lightgrey;
+      border-bottom: 1px solid lightgrey;
+    }
+
+    h1 {
+      line-height: 1.15;
+      font-size: 4rem;
+      font-family: "Roboto", sans-serif;
+      padding: 0 24px 24px 24px;
+      border-bottom: 2px solid white;
+
+      @media screen and (min-width: 768px) {
+        padding: 0 0 24px 0;
+      }
+    }
+
+    p {
+      max-width: 960px;
+      margin: auto;
+      font-family: "Lora", serif;
+      text-align: justify;
+      margin-bottom: 48px;
+      padding: 0 24px;
+
+      @media screen and (min-width: 768px) {
+        text-align: left;
+        margin: auto;
+        margin-bottom: 48px;
+        padding: 0;
+      }
+    }
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin: 48px 0;
+
+    a {
+      display: block;
+      margin: 8px 0;
+      font-weight: bold;
+      border-bottom: 1px solid white;
+    }
+  }
+
+  &__gallery {
+    width: 90%;
+    margin: auto;
+    margin-top: 48px;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+
+    &--image {
+      width: 360px;
+      object-fit: cover;
+      border: 1px solid white;
+      margin-bottom: 48px;
+    }
+  }
+}
+
+.embed {
+  display: flex;
+  justify-content: center;
+  max-width: 320px;
+  margin: auto;
+  margin-bottom: 48px;
+  border-radius: 8px;
+
+  iframe {
+    max-width: 320px;
+  }
+
+  @media screen and (min-width: 768px) {
+    max-width: 640px;
+
+    iframe {
+      max-width: 640px;
+    }
+  }
+}
+
+.lyrics {
+  display: flex;
+}

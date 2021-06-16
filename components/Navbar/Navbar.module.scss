@@ -1,0 +1,82 @@
+.navBar {
+  display: flex;
+  width: 100%;
+  margin-bottom: 120px;
+  font-family: "Roboto", sans-serif;
+  font-size: 24px;
+  margin-top: -4px;
+
+  button {
+    display: block;
+    position: absolute;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    color: black !important;
+    font-size: 30px;
+    color: white;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    z-index: 998;
+
+    @media screen and (min-width: 768px) {
+      display: none;
+    }
+  }
+}
+
+.navBar ul {
+  margin: auto;
+  width: 100%;
+  display: none;
+  justify-content: space-evenly;
+  font-weight: 100;
+  padding: 0;
+
+  svg {
+    position: absolute;
+    right: 0;
+    width: 48px;
+    height: 48px;
+    margin: 4px 12px;
+  }
+
+  @media screen and (min-width: 768px) {
+    display: flex;
+
+    svg {
+      display: none;
+    }
+  }
+}
+
+.navBar li {
+  overflow: hidden;
+  list-style-type: none;
+  padding-bottom: 4px;
+
+  &:hover {
+    padding-bottom: 2px;
+    cursor: pointer;
+
+    &::after {
+      transform: scaleX(1);
+      transform-origin: 0% 50%;
+    }
+  }
+
+  &::after {
+    display: block;
+    content: "";
+    border-bottom: 2px solid black;
+    transform: scaleX(0);
+    transform-origin: 0% 50%;
+    transition: transform 250ms ease-in-out;
+  }
+}
+
+.mobileButton {
+  z-index: 999;
+}

@@ -1,0 +1,55 @@
+.container {
+  padding: 0 0.5rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  width: 320px;
+
+  @media screen and (min-width: 768px) { 
+    height: 90vh;
+    width: 768px;
+  }
+}
+
+.title {
+  margin-top: 240px;
+  display: flex;
+  line-height: 1.15;
+  font-size: 4rem;
+  align-items: center;
+  font-family: "Roboto", sans-serif;
+
+  img {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+.grid {
+  max-width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.photo {
+  display: block;
+  text-align: center;
+
+  img {
+    max-width: 320px;
+
+    @media screen and (min-width: 768px) { 
+      max-width: 768px;
+    }
+  }
+
+  &:active,
+  &:focus {
+    outline: 0;
+    border: none;
+  }
+}
