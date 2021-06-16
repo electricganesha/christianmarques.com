@@ -11,8 +11,6 @@ export default function Projects(props) {
   }
 
   return (
-    <div className={styles.container}>
-      {writing ? (
         <div className={styles.project}>
           <div
             className={styles.wrapper}
@@ -55,8 +53,6 @@ export default function Projects(props) {
             </div>
           </div>
         </div>
-      ) : null}
-    </div>
   );
 }
 
@@ -74,7 +70,7 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: true,
+    fallback: false,
   };
 }
 

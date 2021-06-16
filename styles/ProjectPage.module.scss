@@ -16,6 +16,10 @@
     background-color: rgba(0, 0, 0, 0.6);
     width: 100%;
     overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
     @media screen and (min-width: 768px) { 
       margin-top: 280px;
@@ -43,6 +47,7 @@
       max-width: 360px;
       
       @media screen and (min-width: 768px) { 
+        max-width: 960px;
         font-size: 4rem;
         padding: 0;
       }
@@ -56,7 +61,7 @@
       margin-bottom: 48px;
       text-align: justify;
 
-      @media screen and (min-width: 768px) { 
+      @media screen and (min-width: 768px) {
         margin: auto;
       }
     }
