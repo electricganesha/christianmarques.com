@@ -1,10 +1,10 @@
 import admin from "firebase-admin";
-import serviceAccount from "./serviceAccountKey.json";
+import serviceAccount from "./serviceAccountKey";
 
 if (!admin.apps.length) {
   try {
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.cert(serviceAccount.serviceAccountKey),
       databaseURL: process.env.FIREBASE_FIRESTORE_URL,
     });
   } catch (error) {
