@@ -4,13 +4,17 @@ import Link from "next/link";
 import { slide as Menu } from "react-burger-menu";
 import { useRouter } from 'next/router'
 
-const MenuIconClosed = () => (
+const MenuIconClosed = (isMenuOpen) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     className="h-6 w-6"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
+    style={{
+      display: isMenuOpen ? "block" : "none",
+      zIndex: isMenuOpen ? "999" : "-1"
+    }}
   >
     <path
       strokeLinecap="round"
@@ -28,6 +32,7 @@ const MenuIconOpen = () => (
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
+    
   >
     <path
       strokeLinecap="round"
@@ -44,11 +49,15 @@ const Navbar = () => {
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(!isMenuOpen);
+    console.log("IS MENU OPEN ", isMenuOpen);
   }, [isMenuOpen, setIsMenuOpen]);
 
   useEffect(() => {
+    setIsMenuOpen(false);
+
     const handleRouteChange = () => {
       setIsMenuOpen(false);
+      document.body.scrollTop = 0;
     }
 
     router.events.on('routeChangeStart', handleRouteChange)
@@ -97,10 +106,10 @@ const Navbar = () => {
   return (
     <div className={styles.navBar}>
       <button className={styles.mobileButton} onClick={toggleMenu}>
-        {isMenuOpen ? MenuIconOpen : <MenuIconClosed />}
+        <MenuIconClosed/>
       </button>
-      <Menu isOpen={isMenuOpen}>{navbarList}</Menu>
       {navbarList}
+      <Menu isOpen={isMenuOpen} onClose={toggleMenu}>{navbarList}</Menu>
     </div>
   );
 };

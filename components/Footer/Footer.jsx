@@ -18,22 +18,28 @@ const Footer = () => {
         </p>
       </div>
       <div className={styles.footer__rightSide}>
-        <a href="https://www.linkedin.com/in/chmarques/">
+        <a href="https://www.linkedin.com/in/chmarques/" target="_blank">
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/linkedin.png" />
         </a>
-        <a href="https://github.com/electricganesha">
+        <a href="https://twitter.com/electricganesha" target="_blank">
+          <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623964751/christianmarques.com/icons/twitter.png" />
+        </a>
+        <a href="https://github.com/electricganesha" target="_blank">
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/github.png" />
         </a>
-        <a href="https://www.instagram.com/electricganesha/">
+        <a href="https://www.instagram.com/electricganesha/" target="_blank">
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/instagram.png" />
         </a>
-        <a href="https://www.youtube.com/channel/UCh7Zz8X6hFxEh9VZhKYRN1Q">
+        <a href="https://www.youtube.com/channel/UCh7Zz8X6hFxEh9VZhKYRN1Q" target="_blank">
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/youtube.png" />
         </a>
-        <a href="https://bandcamp.com/electricganesha">
+        <a href="https://www.goodreads.com/electricganesha " target="_blank">
+          <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623921945/christianmarques.com/icons/goodreads.png" />
+        </a>
+        <a href="https://bandcamp.com/electricganesha" target="_blank">
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/bandcamp.png" />
         </a>
-        <a href="https://soundcloud.com/christianmarques">
+        <a href="https://soundcloud.com/christianmarques" target="_blank">
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/soundcloud.png" />
         </a>
       </div>

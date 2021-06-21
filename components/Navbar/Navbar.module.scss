@@ -1,10 +1,14 @@
 .navBar {
   display: flex;
   width: 100%;
-  margin-bottom: 120px;
   font-family: "Roboto", sans-serif;
   font-size: 24px;
   margin-top: -4px;
+  padding-bottom: 80px;
+
+  @media screen and (min-width: 768px) {
+    padding-bottom: 120px;
+  }
 
   button {
     display: block;
@@ -13,7 +17,6 @@
     width: 60px;
     height: 60px;
     color: black !important;
-    font-size: 30px;
     color: white;
     background: transparent;
     border: none;
@@ -40,7 +43,7 @@
     right: 0;
     width: 48px;
     height: 48px;
-    margin: 4px 12px;
+    margin: 4px 8px;
   }
 
   @media screen and (min-width: 768px) {

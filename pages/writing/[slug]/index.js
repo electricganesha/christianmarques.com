@@ -1,17 +1,23 @@
-import styles from "../../styles/WritingPage.module.scss";
-import { useRouter } from "next/router";
-import Loader from "../../components/Loader/Loader";
+import styles from "../../../styles/WritingPage.module.scss";
+import {Image, Placeholder } from 'cloudinary-react';
+import SocialMetaTags from "../../../components/SocialMetaTags/SocialMetaTags";
 
-export default function Projects(props) {
-  const router = useRouter();
+export default function Writing(props) {
   const writing = props.writing;
 
-  if (router.isFallback || typeof window === 'undefined') {
-    return <Loader />;
+  if (typeof window === 'undefined') {
+    return null;
   }
 
   return (
         <div className={styles.project}>
+          <SocialMetaTags 
+            name={writing.description}
+            description={writing.text}
+            image={writing.image}
+            url={`https://christianmarques.com/writing/${writing.slug}/`} 
+            type={"article"}
+          />
           <div
             className={styles.wrapper}
             style={{ 
@@ -42,11 +48,12 @@ export default function Projects(props) {
               {writing.gallery && writing.gallery.length > 0 && (
                 <div className={styles.project__gallery}>
                   {writing.gallery.map((image, index) => (
-                    <img
-                      key={index}
+                    <Image 
+                    key={index}
                       className={styles["project__gallery--image"]}
-                      src={image}
-                    />
+                      src={image}>
+                    <Placeholder type="blur" />
+                  </Image>
                   ))}
                 </div>
               )}

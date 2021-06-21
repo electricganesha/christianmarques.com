@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import styles from "./MusicCard.module.scss";
 import Link from "next/link";
 import { format } from "date-fns";

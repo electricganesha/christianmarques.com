@@ -1,17 +1,23 @@
-import styles from "../../styles/ProjectPage.module.scss";
-import { useRouter } from "next/router";
-import Loader from "../../components/Loader/Loader";
+import styles from "../../../styles/ProjectPage.module.scss";
+import {Image, Placeholder } from 'cloudinary-react';
+import SocialMetaTags from '../../../components/SocialMetaTags/SocialMetaTags';
 
 export default function Projects(props) {
-  const router = useRouter();
   const project = props.project;
 
-  if (router.isFallback || typeof window === 'undefined') {
-    return <Loader />;
+  if (typeof window === 'undefined') {
+    return null;
   }
 
   return (
         <div className={styles.project}>
+          <SocialMetaTags 
+            name={project.name}
+            description={project.description}
+            image={project.image}
+            url={`https://christianmarques.com/projects/${project.slug}/`} 
+            type={"article"}
+          />
           <div
             className={styles.wrapper}
             style={{
@@ -42,11 +48,12 @@ export default function Projects(props) {
               {project.gallery && project.gallery.length > 0 && (
                 <div className={styles.project__gallery}>
                   {project.gallery.map((image, index) => (
-                    <img
-                      className={styles["project__gallery--image"]}
+                    <Image 
+                    className={styles["project__gallery--image"]}
                       src={image}
-                      key={index}
-                    />
+                      key={index}>
+                    <Placeholder type="blur" />
+                  </Image>
                   ))}
                 </div>
               )}

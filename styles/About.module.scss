@@ -23,6 +23,16 @@
       text-align: center;
     }
   }
+
+  a {
+    border-bottom: 1px solid black;
+  }
+
+  a:hover {
+    color: grey;
+    border-bottom: 1px solid grey;
+  }
+
 }
 
 .coverImage {

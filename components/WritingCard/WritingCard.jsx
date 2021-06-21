@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import styles from "./WritingCard.module.scss";
 import Link from "next/link";
 import { format } from "date-fns";

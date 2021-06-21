@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import styles from "./ProjectCard.module.scss";
 import Link from "next/link";
 import { format } from "date-fns";
+import {Image, Placeholder } from 'cloudinary-react';
 
 const ProjectCard = ({ project }) => {
   return (
@@ -9,7 +10,10 @@ const ProjectCard = ({ project }) => {
       <Link href={`/projects/${project.slug}`}>
         <a>
           <p>{project.name}</p>
-          <img src={project.image} />
+          <Image 
+            src={project.image}>
+              <Placeholder type="blur" />
+          </Image> 
           <div className={styles.date}>
             {format(new Date(project.date._seconds * 1000), "MMM yyyy")}
           </div>
