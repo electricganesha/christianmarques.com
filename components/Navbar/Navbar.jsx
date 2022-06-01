@@ -100,6 +100,11 @@ const Navbar = () => {
           <a>About</a>
         </Link>
       </li>
+      <li>
+        <Link href="https://hypseus.vercel.app">
+          <a>Hypseus</a>
+        </Link>
+      </li>
     </ul>
   );
 
