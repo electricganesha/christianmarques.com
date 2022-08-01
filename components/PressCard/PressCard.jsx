@@ -1,21 +1,31 @@
 import React from "react";
 import styles from "./PressCard.module.scss";
 import Link from "next/link";
-import { format } from "date-fns";
-import {Image, Placeholder } from 'cloudinary-react';
+import {format} from "date-fns";
+import Image from "next/image";
+import {
+  convertToCloudinaryBlurURL,
+  cleanUpCloudinaryURL
+} from "../../utils/cloudinary";
 
-const ProjectCard = ({ project }) => {
+const PressCard = ({project: pressItem}) => {
   return (
-    <div className={styles.projectCard}>
-      <Link href={`/press/${project.slug}`}>
+    <div className={styles.pressCard}>
+      <Link href={`/press/${pressItem.slug}`}>
         <a>
-          <p>{project.name}</p>
-          <Image 
-            src={project.image}>
-              <Placeholder type="blur" />
-          </Image> 
+          <p>
+            {pressItem.name}
+          </p>
+          <Image
+            width={190}
+            height={190}
+            alt={`${pressItem.name} thumbnail`}
+            placeholder="blur"
+            blurDataURL={convertToCloudinaryBlurURL(pressItem.image)}
+            src={cleanUpCloudinaryURL(pressItem.image)}
+          />
           <div className={styles.date}>
-            {format(new Date(project.date._seconds * 1000), "MMM yyyy")}
+            {format(new Date(pressItem.date._seconds * 1000), "MMM yyyy")}
           </div>
         </a>
       </Link>
@@ -23,4 +33,4 @@ const ProjectCard = ({ project }) => {
   );
 };
 
-export default ProjectCard;
+export default PressCard;

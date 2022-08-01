@@ -1,34 +1,45 @@
 import React from "react";
 import styles from "./WritingCard.module.scss";
 import Link from "next/link";
-import { format } from "date-fns";
+import {format} from "date-fns";
+import Image from "next/image";
+import {
+  convertToCloudinaryBlurURL,
+  cleanUpCloudinaryURL
+} from "../../utils/cloudinary";
 
-const WritingCard = ({ project }) => {
+const WritingCard = ({project: writingItem}) => {
   return (
     <div className={styles.writingCard}>
-      <Link href={`/writing/${project.slug}`}>
+      <Link href={`/writing/${writingItem.slug}`}>
         <a>
-          <p>
-            {format(new Date(project.date._seconds * 1000), "MMM yyyy")} &mdash;{" "}
-            {project.name}
-          </p>
-          <div
+          <div className={styles.writingCard__text}>
+            {format(
+              new Date(writingItem.date._seconds * 1000),
+              "MMM yyyy"
+            )}{" "}
+            &mdash; {writingItem.name}
+          </div>
+          <Image
             className={styles.image}
-            style={{
-              backgroundImage: `url("${project.image}")`,
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
+            width={480}
+            height={240}
+            alt={writingItem.name}
+            placeholder="blur"
+            blurDataURL={convertToCloudinaryBlurURL(writingItem.image)}
+            src={cleanUpCloudinaryURL(writingItem.image)}
           />
-          <p className={styles.writingCard__bold}>{project.description}</p>
-          {project.publisher && project.publisher.length > 0 && (
-            <a href={project.publisher[1]}>
-              <p className={styles.writingCard__publisher}>
-                {project.publisher[0]}
-              </p>
-            </a>
-          )}
+          <div className={styles.writingCard__bold}>
+            {writingItem.description}
+          </div>
+          {writingItem.publisher &&
+            writingItem.publisher.length > 0 &&
+            <a
+              href={writingItem.publisher[1]}
+              className={styles.writingCard__publisher}
+            >
+              {writingItem.publisher[0]}
+            </a>}
         </a>
       </Link>
     </div>

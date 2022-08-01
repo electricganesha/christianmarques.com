@@ -1,25 +1,32 @@
 import React from "react";
 import styles from "./MusicCard.module.scss";
 import Link from "next/link";
-import { format } from "date-fns";
+import {format} from "date-fns";
+import Image from "next/image";
+import {
+  convertToCloudinaryBlurURL,
+  cleanUpCloudinaryURL
+} from "../../utils/cloudinary";
 
-const MusicCard = ({ project }) => {
+const MusicCard = ({musicItem}) => {
   return (
     <div className={styles.musicCard}>
-      <Link href={`/music/${project.slug}`}>
+      <Link href={`/music/${musicItem.slug}`}>
         <a>
-          <p>{project.name}</p>
-          <div
+          <p>
+            {musicItem.name}
+          </p>
+          <Image
             className={styles.image}
-            style={{
-              backgroundImage: `url("${project.image}")`,
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
+            width={192}
+            height={192}
+            alt={musicItem.name}
+            placeholder="blur"
+            blurDataURL={convertToCloudinaryBlurURL(musicItem.image)}
+            src={cleanUpCloudinaryURL(musicItem.image)}
           />
           <p className={styles.musicCard__bold}>
-            {format(new Date(project.date._seconds * 1000), "MMM yyyy")}{" "}
+            {format(new Date(musicItem.date._seconds * 1000), "MMM yyyy")}{" "}
           </p>
         </a>
       </Link>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, {useState, useCallback} from "react";
 import styles from "./Footer.module.scss";
 import Link from "next/link";
 
@@ -11,7 +11,7 @@ const Footer = () => {
           Website designed and developed by Christian Marques using{" "}
           <a href="https://nextjs.org/">Next.js</a>,{" "}
           <a href="https://reactjs.org/">ReactJS</a>,{" "}
-          <a href="https://p5js.org/">P5.js</a>,{" "}
+          <a href="https://threejs.org/">Three.js</a>,{" "}
           <a href="http://kenwheeler.github.io/slick/">react-slick</a>,{" "}
           <a href="https://date-fns.org/">date-fns</a>,{" "}
           <a href="https://firebase.google.com/">Firebase</a>
@@ -30,7 +30,10 @@ const Footer = () => {
         <a href="https://www.instagram.com/electricganesha/" target="_blank">
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/instagram.png" />
         </a>
-        <a href="https://www.youtube.com/channel/UCh7Zz8X6hFxEh9VZhKYRN1Q" target="_blank">
+        <a
+          href="https://www.youtube.com/channel/UCh7Zz8X6hFxEh9VZhKYRN1Q"
+          target="_blank"
+        >
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/youtube.png" />
         </a>
         <a href="https://www.goodreads.com/electricganesha " target="_blank">

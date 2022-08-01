@@ -4,18 +4,23 @@
   width: 100%;
   font-family: "Lora", serif;
   overflow-y: initial;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   @media screen and (min-width: 768px) {
     width: 960px;
     overflow-y: scroll;
   }
 
-  p {
+  &__text {
     padding: 0 12px;
     text-align: center;
     font-size: 16px;
     font-family: "Roboto", sans-serif;
     font-weight: bold;
+    margin-bottom: 24px;
 
     &::after {
       padding-bottom: 4px;
@@ -29,19 +34,17 @@
     }
   }
 
-  a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
   &__bold {
     font-weight: 700;
+    margin-top: 24px;
+    text-align: center;
   }
 
   &__publisher {
-    font-size: 14px;
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    font-family: "Roboto", sans-serif;
   }
 
   &:hover {
@@ -59,7 +62,8 @@
   transition: all 0.5s ease;
   width: 100%;
   height: 240px;
-  
+  object-fit: cover;
+
   @media screen and (min-width: 768px) {
     width: 480px;
     height: 240px;

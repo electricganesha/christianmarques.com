@@ -1,8 +1,8 @@
 .wrapper {
   width: 100%;
-  background-color: rgba(0, 0, 0, .6);
+  background-color: rgba(0, 0, 0, 0.6);
 
-  @media screen and (min-width: 768px) { 
+  @media screen and (min-width: 768px) {
     background-size: cover;
     height: 100vh;
     background-position: center;
@@ -85,16 +85,15 @@
   &__gallery {
     width: 90%;
     margin: auto;
-    margin-top: 48px;
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap;
+    gap: 48px;
 
     &--image {
       width: 360px;
       object-fit: cover;
       border: 1px solid white;
-      margin-bottom: 48px;
     }
   }
 }
