@@ -3,14 +3,14 @@ import Head from 'next/head';
 const FirebaseTag = () => {
     const script = `
     var firebaseConfig = {
-        apiKey: "AIzaSyCjAlrHNFXhazEu_vR9jExoBS7tUROob6E",
-        authDomain: "christianmarques-c2f93.firebaseapp.com",
-        databaseURL: "https://christianmarques-c2f93.firebaseio.com",
-        projectId: "christianmarques-c2f93",
-        storageBucket: "christianmarques-c2f93.appspot.com",
-        messagingSenderId: "1018634230837",
-        appId: "1:1018634230837:web:6a9a52274d1d69d049257c",
-        measurementId: "G-NYL87ZTZR8"
+        apiKey: ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY},
+        authDomain: ${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN},
+        databaseURL: ${process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL},
+        projectId: ${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID},
+        storageBucket: ${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET},
+        messagingSenderId: ${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID},
+        appId: ${process.env.NEXT_PUBLIC_FIREBASE_APP_ID},
+        measurementId: ${process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID}
       };
 
       firebase.initializeApp(firebaseConfig);

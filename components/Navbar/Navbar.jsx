@@ -105,6 +105,11 @@ const Navbar = () => {
         </Link>
       </li>
       <li>
+        <Link href="/lab">
+          <a>Lab</a>
+        </Link>
+      </li>
+      <li>
         <Link href="https://hypseus.vercel.app">
           <a>Hypseus</a>
         </Link>

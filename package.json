@@ -25,5 +25,9 @@
     "slick-carousel": "^1.8.1",
     "three": "^0.142.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1"
+  }
 }
