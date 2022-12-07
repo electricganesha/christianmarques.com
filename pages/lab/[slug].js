@@ -19,7 +19,7 @@ export default function Experiment(props) {
         name={project.name}
         description={project.description}
         image={project.image}
-        url={`https://christianmarques.com/music/${project.slug}/`}
+        url={`https://christianmarques.com/lab/${project.slug}/`}
         type={"article"}
       />
       <div
@@ -27,19 +27,47 @@ export default function Experiment(props) {
         style={{
           backgroundImage: window.matchMedia("(min-width: 768px)").matches
             ? `url("${project.image}")`
-            : `url("https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623841344/christianmarques.com/texture.webp")`,
+            : `url("https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623841344/christianmarques.com/texture.webp")`
         }}
       >
         <div className={styles.project__container}>
-          <h1>{project.name}</h1>
+          <h1>
+            {project.name}
+          </h1>
           <p dangerouslySetInnerHTML={{__html: project.description}} />
-          {project.link ? (
-            <div className={styles.embed}>
-              <div className={styles.embed__container}>
-                <iframe src={project.link}></iframe>
-              </div>
-            </div>
-          ) : null}
+          <div className={styles.project__links}>
+            {project.link &&
+              project.link.length > 0 &&
+              <a href={project.link[1]} target="_blank">
+                {project.link[0]}
+              </a>}
+            {project.link2 &&
+              project.link2.length > 0 &&
+              <a href={project.link2[1]} target="_blank">
+                {project.link2[0]}
+              </a>}
+          </div>
+          {project.embed &&
+            <div
+              className={styles.embed}
+              dangerouslySetInnerHTML={{__html: project.embed}}
+            />}
+          {project.gallery &&
+            project.gallery.length > 0 &&
+            <div className={styles.project__gallery}>
+              {project.gallery.map((image, index) =>
+                <Image
+                  placeholder="blur"
+                  blurDataURL={convertToCloudinaryBlurURL(image)}
+                  alt={`Lab gallery image - ${index}`}
+                  key={index}
+                  width={360}
+                  height={360}
+                  className={styles["project__gallery--image"]}
+                  src={cleanUpCloudinaryURL(image)}
+                />
+              )}
+            </div>}
         </div>
       </div>
     </div>
@@ -47,7 +75,7 @@ export default function Experiment(props) {
 }
 
 export async function getStaticPaths() {
-  const res = await fetch("http://localhost:3000/api/lab");
+  const res = await fetch("https://christianmarques-com.vercel.app/api/lab");
   const data = await res.json();
 
   const paths = data.map((project) => {
@@ -65,7 +93,7 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps = async ({params}) => {
-  const res = await fetch(`http://localhost:3000/api/lab/${params.slug}`);
+  const res = await fetch(`https://christianmarques-com.vercel.app/api/lab/${params.slug}`);
   const experiment = await res.json();
 
   return {

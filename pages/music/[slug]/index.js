@@ -61,6 +61,8 @@ export default function Music(props) {
                   blurDataURL={convertToCloudinaryBlurURL(image)}
                   alt={`Music gallery image - ${index}`}
                   key={index}
+                  width={360}
+                  height={180}
                   className={styles["project__gallery--image"]}
                   src={cleanUpCloudinaryURL(image)}
                 />
@@ -73,7 +75,7 @@ export default function Music(props) {
 }
 
 export async function getStaticPaths() {
-  const res = await fetch("http://localhost:3000/api/music");
+  const res = await fetch("https://christianmarques-com.vercel.app/api/music");
   const data = await res.json();
 
   const paths = data.map(project => {
@@ -91,7 +93,7 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps = async ({params}) => {
-  const res = await fetch(`http://localhost:3000/api/music/${params.slug}`);
+  const res = await fetch(`https://christianmarques-com.vercel.app/api/music/${params.slug}`);
   const music = await res.json();
 
   return {

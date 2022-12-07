@@ -75,7 +75,7 @@ export default function Projects(props) {
 }
 
 export async function getStaticPaths() {
-  const res = await fetch("http://localhost:3000/api/projects");
+  const res = await fetch("https://christianmarques-com.vercel.app/api/projects");
   const data = await res.json();
 
   const paths = data.map(project => {
@@ -93,7 +93,7 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps = async ({params}) => {
-  const res = await fetch(`http://localhost:3000/api/projects/${params.slug}`);
+  const res = await fetch(`https://christianmarques-com.vercel.app/api/projects/${params.slug}`);
   const project = await res.json();
 
   return {

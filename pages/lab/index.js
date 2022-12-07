@@ -34,7 +34,7 @@ export default function Lab({experiments}) {
 }
 
 export const getStaticProps = async () => {
-  const res = await fetch("http://localhost:3000/api/lab");
+  const res = await fetch("https://christianmarques-com.vercel.app/api/lab");
   const experiments = await res.json();
   return {
     props: {experiments},

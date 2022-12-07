@@ -31,7 +31,7 @@ export default function Projects(props) {
 }
 
 export const getStaticProps = async () => {
-  const res = await fetch("http://localhost:3000/api/writing");
+  const res = await fetch("https://christianmarques-com.vercel.app/api/writing");
   const writing = await res.json();
   return {
     props: { writing },

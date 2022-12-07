@@ -75,7 +75,7 @@ export default function Press(props) {
 }
 
 export async function getStaticPaths() {
-  const res = await fetch("http://localhost:3000/api/press");
+  const res = await fetch("https://christianmarques-com.vercel.app/api/press");
   const data = await res.json();
 
   const paths = data.map(press => {
@@ -93,7 +93,7 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps = async ({params}) => {
-  const res = await fetch(`http://localhost:3000/api/press/${params.slug}`);
+  const res = await fetch(`https://christianmarques-com.vercel.app/api/press/${params.slug}`);
   const press = await res.json();
 
   return {

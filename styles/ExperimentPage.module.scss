@@ -89,4 +89,19 @@
             }
         }
     }
+
+  &__gallery {
+    width: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 48px;
+
+    &--image {
+      width: 360px;
+      object-fit: cover;
+      border: 1px solid white;
+    }
+  }
 }

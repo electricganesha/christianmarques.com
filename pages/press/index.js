@@ -30,7 +30,7 @@ export default function Press(props) {
 }
 
 export const getStaticProps = async () => {
-  const res = await fetch("http://localhost:3000/api/press");
+  const res = await fetch("https://christianmarques-com.vercel.app/api/press");
   const press = await res.json();
   return {
     props: {press}
