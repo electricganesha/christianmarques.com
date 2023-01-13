@@ -1,14 +1,14 @@
 .container {
-  padding: 0 0.5rem;
+  padding: 48px 0.5rem 0 0.5rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 .title {
-  margin-top: 240px;
   display: flex;
   margin: 0;
+  margin-top: 48px;
   line-height: 1.15;
   font-size: 3rem;
   font-weight: 100;
@@ -31,16 +31,5 @@
       height: 6rem;
       margin: 0;
     }
-  }
-}
-
-.canvas {
-  width: 1200px;
-  height: 600px;
-  margin: 40px auto auto auto;
-
-  @media screen and (min-width: 768px) {
-    width: auto;
-    margin: 80px auto auto auto;
   }
 }

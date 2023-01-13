@@ -1,9 +1,9 @@
 .container {
   width: 100%;
-  padding: 0 48px;
+  padding: 128px 24px 256px 24px;
 
   @media screen and (min-width: 768px) { 
-    padding: 0;
+    padding: 128px 0 48px 0;
   }
 }
 

@@ -1,13 +1,12 @@
 .container {
-  padding: 0 0.5rem;
+  padding: 128px 0.5rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 60vh;
   width: 320px;
+  height: 100%;
 
   @media screen and (min-width: 768px) { 
-    height: 90vh;
     width: 768px;
   }
 }

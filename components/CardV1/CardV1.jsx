@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./ProjectCard.module.scss";
+import styles from "./CardV1.module.scss";
 import Link from "next/link";
 import {format} from "date-fns";
 import Image from "next/image";
@@ -8,10 +8,10 @@ import {
   cleanUpCloudinaryURL
 } from "../../utils/cloudinary";
 
-const ProjectCard = ({project}) => {
+const CardV1 = ({project, type}) => {
   return (
-    <div className={styles.projectCard}>
-      <Link href={`/projects/${project.slug}`}>
+    <div className={styles.card}>
+      <Link href={`/${type}/${project.slug}`}>
         <a>
           <p>
             {project.name}
@@ -33,4 +33,4 @@ const ProjectCard = ({project}) => {
   );
 };
 
-export default ProjectCard;
+export default CardV1;

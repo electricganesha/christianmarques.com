@@ -12,7 +12,7 @@ export default function Experiment(props) {
   if (typeof window === "undefined") {
     return null;
   }
-
+  
   return (
     <div className={styles.project}>
       <SocialMetaTags
@@ -27,35 +27,27 @@ export default function Experiment(props) {
         style={{
           backgroundImage: window.matchMedia("(min-width: 768px)").matches
             ? `url("${project.image}")`
-            : `url("https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623841344/christianmarques.com/texture.webp")`
+            : `url("https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623841344/christianmarques.com/texture.webp")`,
         }}
       >
         <div className={styles.project__container}>
-          <h1>
-            {project.name}
-          </h1>
+          <h1>{project.name}</h1>
           <p dangerouslySetInnerHTML={{__html: project.description}} />
           <div className={styles.project__links}>
-            {project.link &&
-              project.link.length > 0 &&
-              <a href={project.link[1]} target="_blank">
-                {project.link[0]}
-              </a>}
-            {project.link2 &&
-              project.link2.length > 0 &&
-              <a href={project.link2[1]} target="_blank">
-                {project.link2[0]}
-              </a>}
+            {project.links &&
+              project.links.length > 0 &&
+              project.links.map((link) => (
+                <>
+                  <a key={link.url} href={link.url} target="_blank">
+                    {link.title}
+                  </a>
+                  <br />
+                </>
+              ))}
           </div>
-          {project.embed &&
-            <div
-              className={styles.embed}
-              dangerouslySetInnerHTML={{__html: project.embed}}
-            />}
-          {project.gallery &&
-            project.gallery.length > 0 &&
+          {project.gallery && project.gallery.length > 0 && (
             <div className={styles.project__gallery}>
-              {project.gallery.map((image, index) =>
+              {project.gallery.map((image, index) => (
                 <Image
                   placeholder="blur"
                   blurDataURL={convertToCloudinaryBlurURL(image)}
@@ -66,8 +58,9 @@ export default function Experiment(props) {
                   className={styles["project__gallery--image"]}
                   src={cleanUpCloudinaryURL(image)}
                 />
-              )}
-            </div>}
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -93,7 +86,9 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps = async ({params}) => {
-  const res = await fetch(`https://christianmarques-com.vercel.app/api/lab/${params.slug}`);
+  const res = await fetch(
+    `https://christianmarques-com.vercel.app/api/lab/${params.slug}`
+  );
   const experiment = await res.json();
 
   return {

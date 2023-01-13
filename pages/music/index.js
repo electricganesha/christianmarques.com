@@ -1,5 +1,5 @@
 import styles from "../../styles/Music.module.scss";
-import MusicCard from "../../components/MusicCard/MusicCard";
+import CardV1 from "../../components/CardV1/CardV1";
 import {useRouter} from "next/router";
 import Loader from "../../components/Loader/Loader";
 import SocialMetaTags from "../../components/SocialMetaTags/SocialMetaTags";
@@ -23,7 +23,7 @@ export default function Projects(props) {
       />
       <div className={styles.grid}>
         {music.map(musicItem =>
-          <MusicCard musicItem={musicItem} key={musicItem.slug} />
+          <CardV1 project={musicItem} key={musicItem.slug} type="music"/>
         )}
       </div>
     </div>

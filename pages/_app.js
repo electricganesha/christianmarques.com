@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import "../styles/globals.scss";
 import "../node_modules/slick-carousel/slick/slick.css";
 import "../node_modules/slick-carousel/slick/slick-theme.css";
@@ -9,11 +10,11 @@ import GoogleAnalyticsTag from "../components/GoogleAnalyticsTag/GoogleAnalytics
 import SocialMetaTags from "../components/SocialMetaTags/SocialMetaTags";
 
 function MyApp({Component, pageProps}) {
-  const title = `${`Christian Marques . ${new Date().getFullYear()}`}`;
+  const title = `Christian Marques . ${new Date().getFullYear()}`;
   const description =
     "Christian Marques - software engineer - official website.";
   return (
-    <div>
+    <Fragment>
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} key="description" />
@@ -45,7 +46,7 @@ function MyApp({Component, pageProps}) {
       <Footer />
       <GoogleAnalyticsTag />
       <FirebaseTag />
-    </div>
+    </Fragment>
   );
 }
 

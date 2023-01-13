@@ -1,5 +1,5 @@
 import styles from "../../styles/Lab.module.scss";
-import ExperimentCard from "../../components/ExperimentCard";
+import CardV1 from "../../components/CardV1/CardV1";
 import {useRouter} from "next/router";
 import Loader from "../../components/Loader/Loader";
 import SocialMetaTags from "../../components/SocialMetaTags/SocialMetaTags";
@@ -22,7 +22,7 @@ export default function Lab({experiments}) {
       />
       <div className={styles.grid}>
         {experiments.map((experiment) => (
-          <ExperimentCard experimentItem={experiment} key={experiment.slug} />
+          <CardV1 project={experiment} key={experiment.slug} type="lab"/>
         ))}
       </div>
       <p className={styles.disclaimer}>

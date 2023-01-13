@@ -20,8 +20,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 128px 0 176px 0;
 
     @media screen and (min-width: 768px) {
+      padding: 0;
       margin-top: 280px;
     }
 

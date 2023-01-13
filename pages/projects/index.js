@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 import styles from "../../styles/Projects.module.scss";
 import SocialMetaTags from "../../components/SocialMetaTags/SocialMetaTags";
 
-import ProjectCard from "../../components/ProjectCard/ProjectCard";
+import CardV1 from "../../components/CardV1/CardV1";
 import Loader from "../../components/Loader/Loader";
 
 export default function Projects(props) {
@@ -24,7 +24,7 @@ export default function Projects(props) {
       />
       <div className={styles.grid}>
         {projects.map(project =>
-          <ProjectCard project={project} key={project.slug} />
+          <CardV1 project={project} key={project.slug} type="projects"/>
         )}
       </div>
     </div>

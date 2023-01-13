@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <div className={styles.footer}>
       <div className={styles.footer__leftSide}>
-        <p>© Christian Marques . 2021, all rights reserved.</p>
+        <p>© Christian Marques . {new Date().getFullYear()}, all rights reserved.</p>
         <p>
           Website designed and developed by Christian Marques using{" "}
           <a href="https://nextjs.org/">Next.js</a>,{" "}
