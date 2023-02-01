@@ -32,13 +32,6 @@ function MyApp({Component, pageProps}) {
         <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-analytics.js"></script>
       </Head>
-      <SocialMetaTags
-        name={title}
-        description={description}
-        image={`https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623928254/christianmarques.com/website/Screenshot_2021-06-17_at_12.10.43.png`}
-        url={`https://christianmarques.com/`}
-        type={"website"}
-      />
       <Navbar />
       <main className="main">
         <Component {...pageProps} />
