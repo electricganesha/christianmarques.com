@@ -1,8 +1,8 @@
-import React, {useState, useCallback, useEffect} from "react";
-import styles from "./Navbar.module.scss";
 import Link from "next/link";
-import {slide as Menu} from "react-burger-menu";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
+import React, { useCallback, useEffect, useState } from "react";
+import { slide as Menu } from "react-burger-menu";
+import styles from "./Navbar.module.scss";
 
 const MenuIconClosed = isMenuOpen =>
   <svg
@@ -97,6 +97,11 @@ const Navbar = () => {
       <li>
         <Link href="/press">
           <a>Press</a>
+        </Link>
+      </li>
+      <li>
+        <Link href="/blog">
+          <a>Blog</a>
         </Link>
       </li>
       <li>

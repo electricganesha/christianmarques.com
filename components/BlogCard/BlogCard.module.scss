@@ -1,0 +1,116 @@
+.blogCard {
+    border-top: 1px solid black;
+    padding: 24px 0 48px 0;
+    width: 100%;
+    font-family: "Lora", serif;
+    overflow-y: initial;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &__image {
+        object-fit: cover;
+    }
+
+    &:first-child {
+        border-top: none;
+    }
+
+    @media screen and (min-width: 768px) {
+        width: 960px;
+        overflow-y: scroll;
+    }
+
+    &__text {
+        padding: 0 12px;
+        text-align: center;
+        font-size: 16px;
+        font-family: "Roboto", sans-serif;
+        font-weight: bold;
+        margin-bottom: 24px;
+
+        p::after {
+            padding-bottom: 4px;
+            margin: auto;
+            display: block;
+            content: "";
+            border-bottom: 1px solid gainsboro;
+            transform: scaleX(0);
+            transform-origin: 50% 50%;
+            transition: transform 250ms ease-in-out;
+        }
+
+        &:hover {
+            cursor: pointer;
+
+            p::after {
+                transform: scaleX(1);
+                transform-origin: 50% 50%;
+            }
+        }
+
+        img {
+            margin-top: 24px;
+            border: 1px solid black;
+            border-radius: 4px;
+            filter: grayscale(100%);
+            transition: all 0.5s ease;
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+
+            @media screen and (min-width: 768px) {
+                width: 480px;
+                height: 240px;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+
+            &:hover {
+                filter: grayscale(0);
+            }
+        }
+
+        &::after {
+            padding-bottom: 4px;
+            margin: auto;
+            display: block;
+            content: "";
+            border-bottom: 1px solid gainsboro;
+            transform: scaleX(0);
+            transform-origin: 50% 50%;
+            transition: transform 250ms ease-in-out;
+        }
+    }
+
+    &__date {
+        font-size: 12px;
+        margin-top: 12px;
+        font-weight: 400;
+        text-align: center;
+    }
+
+    &__bold {
+        font-weight: 700;
+        margin-top: 24px;
+        text-align: center;
+    }
+
+    &__publisher {
+        display: block;
+        text-align: center;
+        margin-top: 12px;
+        font-family: "Roboto", sans-serif;
+    }
+
+    &:hover {
+        cursor: pointer;
+
+        p::after {
+            transform: scaleX(1);
+            transform-origin: 50% 50%;
+        }
+    }
+}
