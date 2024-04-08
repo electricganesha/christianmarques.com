@@ -1,8 +1,8 @@
 import styles from "../../styles/About.module.scss";
 import Image from "next/image";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import SocialMetaTags from "../../components/SocialMetaTags/SocialMetaTags";
-import {convertToCloudinaryBlurURL} from "../../utils/cloudinary";
+import { convertToCloudinaryBlurURL } from "../../utils/cloudinary";
 
 export default function About() {
   const router = useRouter();
@@ -41,7 +41,8 @@ export default function About() {
           I graduated (B.Sc.) in Computer Science from the{" "}
           <a href="https://ciencias.ulisboa.pt/" target="_blank">
             Faculty of Sciences of the University of Lisbon
-          </a>, and completed my M.Sc. in Information Systems in the same
+          </a>
+          , and completed my M.Sc. in Information Systems in the same
           institution. I spent one full year in the{" "}
           <a href="https://www.upc.edu/en" target="_blank">
             Polytechnic Institute of Catalunya
@@ -49,7 +50,8 @@ export default function About() {
           (Barcelona) through the European interchange programme{" "}
           <a href="https://erasmusprogramme.com/" target="_blank">
             Erasmus Mundus
-          </a>. I also worked for almost two years at the research laboratory{" "}
+          </a>
+          . I also worked for almost two years at the research laboratory{" "}
           <a
             href="https://www.linkedin.com/company/labmag---laboratory-of-agent-modelling/about/"
             target="_blank"
@@ -60,7 +62,8 @@ export default function About() {
           thesis, I continued working on project{" "}
           <a href="http://naadir.fa.utl.pt/" target="_blank">
             NAADIR
-          </a>.{" "}
+          </a>
+          .{" "}
         </p>
         <p>
           I am interested in topics as wide as web development, computer
@@ -71,14 +74,17 @@ export default function About() {
         <p>
           I have worked in various types of organization (academic,
           multinational, startup, etc) and am currently working at{" "}
-          <a href="www.trouva.com" target="_blank">
-            Trouva
-          </a>, where I find a fulfilling day-by-day, complete with a purposeful
-          mission, fast development and a lot of growth. I often volunteer for
-          projects that might have some meaning to me, but I am also open to
-          provide services as a contractor - mostly for web projects, but also
-          video-games, or others, so if you have a project that you think would
-          be interesting to discuss, do get in touch and we can talk about it.
+          <a href="https://www.promaton.com" target="_blank">
+            Promaton
+          </a>
+          , where I find a fulfilling day-by-day, complete with a purposeful
+          mission, amazing company culture, fast development and a lot of
+          growth, trying to innovate dental care with AI-Driven 3D
+          Visualizations. I often volunteer for projects that might have some
+          meaning to me, but I am also open to provide services as a contractor
+          - mostly for web projects, but also video-games, or others, so if you
+          have a project that you think would be interesting to discuss, do get
+          in touch and we can talk about it.
         </p>
         <div className={styles.columns}>
           <details>
@@ -128,6 +134,6 @@ export default function About() {
 
 export const getStaticProps = async () => {
   return {
-    props: {}
+    props: {},
   };
 };
