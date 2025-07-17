@@ -2,14 +2,17 @@
   "name": "christianmarques.com",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.x"
+  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "postbuild": "next-sitemap",
-    "start": "next start",
-    "export": "next export",
-    "build-and-export": "next build && next export",
-    "build-export-deploy": "NODE_ENV=production && next build && next export && vercel --prod"
+    "dev": "export NODE_OPTIONS=--openssl-legacy-provider; next dev",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider; next build",
+    "postbuild": "export NODE_OPTIONS=--openssl-legacy-provider; next-sitemap",
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider; next start",
+    "export": "export NODE_OPTIONS=--openssl-legacy-provider; next export",
+    "build-and-export": "export NODE_OPTIONS=--openssl-legacy-provider; next build && next export",
+    "build-export-deploy": "export NODE_OPTIONS=--openssl-legacy-provider; NODE_ENV=production && next build && next export && vercel --prod"
   },
   "dependencies": {
     "date-fns": "^2.22.1",

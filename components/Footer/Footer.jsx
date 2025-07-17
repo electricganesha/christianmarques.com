@@ -21,9 +21,6 @@ const Footer = () => {
         <a href="https://www.linkedin.com/in/chmarques/" target="_blank">
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/linkedin.png" />
         </a>
-        <a href="https://twitter.com/electricganesha" target="_blank">
-          <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623964751/christianmarques.com/icons/twitter.png" />
-        </a>
         <a href="https://github.com/electricganesha" target="_blank">
           <img src="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623775595/christianmarques.com/icons/github.png" />
         </a>
