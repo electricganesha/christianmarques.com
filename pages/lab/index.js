@@ -1,10 +1,10 @@
 import styles from "../../styles/Lab.module.scss";
-import CardV1 from "../../components/CardV1/CardV1";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import Loader from "../../components/Loader/Loader";
 import SocialMetaTags from "../../components/SocialMetaTags/SocialMetaTags";
+import ProjectCardSmall from "../../components/ProjectCardSmall/ProjectCardSmall";
 
-export default function Lab({experiments}) {
+export default function Lab({ experiments }) {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -22,7 +22,11 @@ export default function Lab({experiments}) {
       />
       <div className={styles.grid}>
         {experiments.map((experiment) => (
-          <CardV1 project={experiment} key={experiment.slug} type="lab"/>
+          <ProjectCardSmall
+            project={experiment}
+            key={experiment.slug}
+            category="lab"
+          />
         ))}
       </div>
       <p className={styles.disclaimer}>
@@ -37,6 +41,6 @@ export const getStaticProps = async () => {
   const res = await fetch("https://christianmarques-com.vercel.app/api/lab");
   const experiments = await res.json();
   return {
-    props: {experiments},
+    props: { experiments },
   };
 };

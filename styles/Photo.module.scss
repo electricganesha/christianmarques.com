@@ -6,7 +6,7 @@
   width: 320px;
   height: 100%;
 
-  @media screen and (min-width: 768px) { 
+  @media screen and (min-width: 768px) {
     width: 768px;
   }
 }
@@ -17,7 +17,6 @@
   line-height: 1.15;
   font-size: 4rem;
   align-items: center;
-  font-family: "Roboto", sans-serif;
 
   img {
     width: 3rem;
@@ -41,7 +40,7 @@
   img {
     max-width: 320px;
 
-    @media screen and (min-width: 768px) { 
+    @media screen and (min-width: 768px) {
       max-width: 768px;
     }
   }

@@ -3,20 +3,20 @@ module.exports = {
   images: {
     loader: "cloudinary",
     path: "https://res.cloudinary.com/dhgkpiqzg/image/upload/",
-    domains: ["res.cloudinary.com"]
+    domains: ["res.cloudinary.com"],
   },
-  exportPathMap: async function() {
+  exportPathMap: async function () {
     return {
-      "/": {page: "/"}
+      "/": { page: "/" },
     };
   },
   reactStrictMode: true,
-  webpack: config => {
+  webpack: (config) => {
     config.module.rules.push({
       test: /\.(glsl|vs|fs|vert|frag)$/,
-      use: ["raw-loader", "glslify-loader"]
+      use: ["raw-loader", "glslify-loader"],
     });
 
     return config;
-  }
+  },
 };

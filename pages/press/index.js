@@ -1,9 +1,9 @@
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import styles from "../../styles/PressPage.module.scss";
 import SocialMetaTags from "../../components/SocialMetaTags/SocialMetaTags";
 
-import PressCard from "../../components/PressCard/PressCard";
 import Loader from "../../components/Loader/Loader";
+import ProjectCardSmall from "../../components/ProjectCardSmall/ProjectCardSmall";
 
 export default function Press(props) {
   const router = useRouter();
@@ -23,7 +23,9 @@ export default function Press(props) {
         type={"article"}
       />
       <div className={styles.grid}>
-        {press.map(item => <PressCard project={item} key={item.slug} />)}
+        {press.map((item) => (
+          <ProjectCardSmall key={item.id} project={item} category="press" />
+        ))}
       </div>
     </div>
   );
@@ -33,6 +35,6 @@ export const getStaticProps = async () => {
   const res = await fetch("https://christianmarques-com.vercel.app/api/press");
   const press = await res.json();
   return {
-    props: {press}
+    props: { press },
   };
 };

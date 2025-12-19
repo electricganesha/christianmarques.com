@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment } from "react";
 import "../styles/globals.scss";
 import "../node_modules/slick-carousel/slick/slick.css";
 import "../node_modules/slick-carousel/slick/slick-theme.css";
@@ -7,9 +7,8 @@ import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
 import FirebaseTag from "../components/FirebaseTag/FirebaseTag";
 import GoogleAnalyticsTag from "../components/GoogleAnalyticsTag/GoogleAnalyticsTag";
-import SocialMetaTags from "../components/SocialMetaTags/SocialMetaTags";
 
-function MyApp({Component, pageProps}) {
+function MyApp({ Component, pageProps }) {
   const title = `Christian Marques . ${new Date().getFullYear()}`;
   const description =
     "Christian Marques - software engineer - official website.";
@@ -24,11 +23,12 @@ function MyApp({Component, pageProps}) {
           content="developer, software engineer, music, poetry, writing, photography, software, engineering, virtual reality, videogames"
         />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Lora&family=Roboto:wght@100;400;700&display=swap"
-          rel="stylesheet"
-        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <style>
+          @import
+          url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+        </style>
         <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-analytics.js"></script>
       </Head>

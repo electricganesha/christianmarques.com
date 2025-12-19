@@ -1,9 +1,10 @@
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import styles from "../../styles/Projects.module.scss";
 import SocialMetaTags from "../../components/SocialMetaTags/SocialMetaTags";
 
 import CardV1 from "../../components/CardV1/CardV1";
 import Loader from "../../components/Loader/Loader";
+import ProjectCardSmall from "../../components/ProjectCardSmall/ProjectCardSmall";
 
 export default function Projects(props) {
   const router = useRouter();
@@ -23,18 +24,24 @@ export default function Projects(props) {
         type={"article"}
       />
       <div className={styles.grid}>
-        {projects.map(project =>
-          <CardV1 project={project} key={project.slug} type="projects"/>
-        )}
+        {projects.map((project) => (
+          <ProjectCardSmall
+            key={project.id}
+            project={project}
+            category="projects"
+          />
+        ))}
       </div>
     </div>
   );
 }
 
 export const getStaticProps = async () => {
-  const res = await fetch("https://christianmarques-com.vercel.app/api/projects");
+  const res = await fetch(
+    "https://christianmarques-com.vercel.app/api/projects"
+  );
   const projects = await res.json();
   return {
-    props: {projects}
+    props: { projects },
   };
 };

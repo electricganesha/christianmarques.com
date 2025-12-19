@@ -1,5 +1,6 @@
 .container {
-  padding: 48px 0.5rem 0 0.5rem;
+  width: 100%;
+  padding: 48px 0 0 0;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -7,12 +8,13 @@
 
 .title {
   display: flex;
-  margin: 0;
+  margin: auto;
   margin-top: 48px;
   line-height: 1.15;
   font-size: 3rem;
   font-weight: 100;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
   text-align: center;
 

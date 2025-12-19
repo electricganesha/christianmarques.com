@@ -1,0 +1,278 @@
+.projectCardLargeLink {
+    opacity: 0;
+    animation: fade-up 0.5s forwards;
+}
+
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.projectCardLargeArticle {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+    .projectCardLargeArticle {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3rem;
+        padding: 0;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .projectCardLargeArticle.reversed {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.projectCardLargeImageCol {
+    width: 100%;
+}
+
+.projectCardLargeText {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .projectCardLargeImageCol {
+        width: 100%;
+        order: 1;
+    }
+
+    .projectCardLargeImageCol.reversed {
+        order: 2;
+    }
+
+    .projectCardLargeText {
+        width: 100%;
+        order: 2;
+    }
+
+    .projectCardLargeText.reversed {
+        order: 1;
+        text-align: right;
+    }
+}
+
+.projectCardLargeImageWrapper {
+    overflow: hidden;
+
+}
+
+.projectCardLargeImage {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+}
+
+.projectCardLargeImageInner {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 62.5%;
+    /* 16:10 aspect ratio */
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .projectCardLargeImageInner {
+        padding-bottom: 0;
+        height: 100%;
+        min-height: 400px;
+    }
+}
+
+.projectCardLargeImg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.projectCardLargeOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+    z-index: 2;
+}
+
+.projectCardLargeLink:hover .projectCardLargeOverlay,
+.projectCardLargeLink:focus .projectCardLargeOverlay {
+    opacity: 1;
+    pointer-events: auto;
+    width: 100%;
+    height: 100%;
+}
+
+.projectCardLargeOverlayContent {
+    width: 100%;
+    padding: 1.5rem;
+    transform: translateY(1rem);
+    opacity: 0;
+    transition: all 0.4s;
+    color: #fff;
+}
+
+.projectCardLargeLink:hover .projectCardLargeOverlayContent,
+.projectCardLargeLink:focus .projectCardLargeOverlayContent {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.projectCardLargeOverlayFlex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.projectCardLargeOverlayText {
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    color: #fff;
+}
+
+.projectCardLargeOverlayArrow {
+    width: 20px;
+    height: 20px;
+    color: #fff;
+}
+
+.projectCardLargeCategory {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #888;
+}
+
+.projectCardLargeTitle {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--foreground, #222);
+    transition: color 0.2s;
+}
+
+@media (min-width: 768px) {
+    .projectCardLargeTitle {
+        font-size: 2rem;
+    }
+}
+
+.projectCardLargeLink:hover .projectCardLargeTitle,
+.projectCardLargeLink:focus .projectCardLargeTitle {
+    color: rgba(34, 34, 34, 0.8);
+}
+
+.projectCardLargeDescription {
+    color: #888;
+    line-height: 1.6;
+    font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+    .projectCardLargeDescription {
+        font-size: 1rem;
+    }
+}
+
+.projectCardLargeImage {
+    aspect-ratio: 16/10;
+    width: 100%;
+    height: auto;
+}
+
+.projectCardLargeImageInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.projectCardLargeTags {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.projectCardLargeTags.reversed {
+    flex-direction: row-reverse;
+}
+
+.projectCardLargeTag {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #ddd;
+    color: rgba(34, 34, 34, 0.7);
+    border-radius: 4px;
+}
+
+.projectCardLargeDate {
+    margin-top: 48px;
+    padding-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #888;
+}
+
+@media (min-width: 768px) {
+    .projectCardLargeOverlay {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: flex-end;
+        background: rgba(0, 0, 0, 0.35);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s;
+        z-index: 2;
+    }
+
+    .projectCardLargeImageInner:hover .projectCardLargeOverlay,
+    .projectCardLargeImageInner:focus .projectCardLargeOverlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .projectCardLargeOverlayContent {
+        width: 100%;
+        padding: 1.5rem;
+        transform: translateY(1rem);
+        opacity: 0;
+        transition: all 0.4s;
+        color: #fff;
+    }
+
+    .projectCardLargeImageInner:hover .projectCardLargeOverlayContent,
+    .projectCardLargeImageInner:focus .projectCardLargeOverlayContent {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

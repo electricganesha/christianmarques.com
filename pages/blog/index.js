@@ -23,8 +23,8 @@ export default function Blog(props) {
         type={"article"}
       />
       <div className={styles.grid}>
-        {posts.map((post) => (
-          <BlogCard post={post} />
+        {posts.map((post, index) => (
+          <BlogCard post={post} reversed={index % 2 === 1} />
         ))}
       </div>
     </div>

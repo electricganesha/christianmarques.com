@@ -2,7 +2,6 @@
   border-top: 1px solid black;
   padding: 24px 0 48px 0;
   width: 100%;
-  font-family: "Lora", serif;
   overflow-y: initial;
   display: flex;
   flex-direction: column;
@@ -22,7 +21,6 @@
     padding: 0 12px;
     text-align: center;
     font-size: 16px;
-    font-family: "Roboto", sans-serif;
     font-weight: bold;
     margin-bottom: 24px;
 
@@ -48,7 +46,6 @@
     display: block;
     text-align: center;
     margin-top: 12px;
-    font-family: "Roboto", sans-serif;
   }
 
   &:hover {
