@@ -133,7 +133,7 @@ const ProjectDetail = ({ project, category }) => {
               <div className={styles.gallery}>
                 <h2 className={styles.galleryHeading}>Gallery</h2>
                 <div className={styles.galleryList}>
-                  {project && project.video || project.embed && (
+                  {project && (project.video || project.embed) && (
                     <div
                       className={styles.galleryEmbedWrapper}
                       style={{ animationDelay: `${1 * 0.1}s` }}

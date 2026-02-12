@@ -16,7 +16,7 @@ export default function Lab({ experiments }) {
       <SocialMetaTags
         name="Christian Marques - Lab"
         description="A section to house experiments, explorations and stuff that comes out of the process."
-        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1660301754/christianmarques.com/website/Screenshot_2022-08-12_at_11.55.26.png"
+        image="hhttps://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776904/christianmarques.com/website/lab.png"
         url="https://christianmarques.com/lab/"
         type={"listing"}
       />

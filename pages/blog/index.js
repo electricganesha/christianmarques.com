@@ -18,7 +18,7 @@ export default function Blog(props) {
       <SocialMetaTags
         name="Christian Marques - Blog"
         description="A selection of Christian Marques' blog posts, posted originally in Medium and ranging a variety of subjects."
-        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623927670/christianmarques.com/website/Screenshot_2021-06-17_at_11.31.49.png"
+        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776904/christianmarques.com/website/blog.png"
         url="https://christianmarques.com/blog/"
         type={"article"}
       />

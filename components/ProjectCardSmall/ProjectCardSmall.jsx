@@ -71,6 +71,13 @@ const ProjectCardSmall = ({ project, index, category }) => {
                 className={styles.cardImage}
                 loading="lazy"
               />
+              {project.wip && (
+                <img
+                  src="/wip.png"
+                  alt="Work in progress"
+                  className={styles.wipOverlay}
+                />
+              )}
               <div className={styles.cardOverlay}>
                 <div className={styles.overlayContent}>
                   <span className={styles.overlayText}>View Project →</span>

@@ -16,7 +16,7 @@ export default function About() {
       <SocialMetaTags
         name="Christian Marques - About"
         description="Hello and nice to meet you, my name is Christian and I'm a full time software engineer (full-stack Javascript), published poet, amateur musician, and hobbyist photographer."
-        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623927670/christianmarques.com/website/Screenshot_2021-06-17_at_11.33.07.png"
+        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776902/christianmarques.com/website/about.png"
         url="https://christianmarques.com/about/"
         type={"article"}
       />

@@ -19,7 +19,7 @@ export default function Projects(props) {
       <SocialMetaTags
         name="Christian Marques - Projects"
         description="A selection of Christian Marques' software projects, from web-apps to videogames, passing through conferences, virtual-reality experiences and video-games."
-        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623927670/christianmarques.com/website/Screenshot_2021-06-17_at_11.31.49.png"
+        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776907/christianmarques.com/website/projects.png"
         url="https://christianmarques.com/projects/"
         type={"article"}
       />

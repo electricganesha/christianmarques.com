@@ -66,6 +66,10 @@ const WebGLSnippet = () => {
       const SPHERE_OFFSET = 100;
       const sphereCount = SPHERE_COUNT_X * SPHERE_COUNT_Y;
 
+      // Scale spheres down on mobile devices
+      const isMobile = window.innerWidth < 768;
+      const scaleMultiplier = isMobile ? 0.5 : 1.0;
+
       const positions = new Float32Array(sphereCount * 3);
       const scales = new Float32Array(sphereCount);
       const angles = new Float32Array(sphereCount);
@@ -80,7 +84,7 @@ const WebGLSnippet = () => {
             iy * SPHERE_OFFSET - (SPHERE_COUNT_Y * SPHERE_OFFSET) / 2;
           positions[i + 2] = 0;
 
-          scales[j] = Math.random() * 2;
+          scales[j] = Math.random() * 2 * scaleMultiplier;
           angles[i] = Math.random() * Math.PI;
 
           i += 3;
@@ -100,7 +104,7 @@ const WebGLSnippet = () => {
           time: { value: 0.0 },
           uColor: { value: new THREE.Color("#000000") },
           uMousePos: { value: new THREE.Vector3(0, 0, 0) },
-          uSize: { value: 1.0 },
+          uSize: { value: isMobile ? 0.5 : 1.0 },
           uIsClicked: { value: 0.0 },
         },
         vertexShader: sphereVertexShader,

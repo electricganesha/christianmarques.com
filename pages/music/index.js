@@ -18,7 +18,7 @@ export default function Projects(props) {
       <SocialMetaTags
         name="Christian Marques - Music"
         description="A selection of Christian Marques' musical projects, from experimental and noisy to melodic and traditional."
-        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623927670/christianmarques.com/website/Screenshot_2021-06-17_at_11.32.37.png"
+        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776906/christianmarques.com/website/music.png"
         url="https://christianmarques.com/music/"
         type={"article"}
       />

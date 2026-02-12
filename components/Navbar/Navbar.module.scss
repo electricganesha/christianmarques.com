@@ -1,6 +1,6 @@
 .navBar {
   position: absolute;
-  background-color: white;
+  background-color: transparent;
   display: flex;
   width: 100%;
   font-family: "Playfair Display", serif;
@@ -11,6 +11,7 @@
   z-index: 99;
 
   @media screen and (min-width: 768px) {
+    background-color: white;
     border-bottom: 1px solid black;
     padding-bottom: 0;
   }

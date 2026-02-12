@@ -11,13 +11,13 @@ export default function Home() {
     <div className={styles.container}>
       <h1 className={styles.title}>
         <img src="/hexagram55.png" alt="Hexagram 55" />
-        Christian Marques
+        <span>Christian Marques</span>
         <img src="/hexagram55.png" alt="Hexagram 55" />
       </h1>
       <SocialMetaTags
         name={title}
         description={description}
-        image={`https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623928254/christianmarques.com/website/Screenshot_2021-06-17_at_12.10.43.png`}
+        image={`https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776624/christianmarques.com/website/Screenshot_2026-01-07_at_09.02.15.png`}
         url={`https://christianmarques.com/`}
         type={"website"}
       />

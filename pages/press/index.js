@@ -18,7 +18,7 @@ export default function Press(props) {
       <SocialMetaTags
         name="Christian Marques - Press"
         description="Interviews, conferences, public appearances, and any social related content for Christian Marques."
-        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1623927670/christianmarques.com/website/Screenshot_2021-06-17_at_11.31.49.png"
+        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776906/christianmarques.com/website/press.png"
         url="https://christianmarques.com/press/"
         type={"article"}
       />
