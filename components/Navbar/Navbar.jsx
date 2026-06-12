@@ -40,6 +40,18 @@ const MenuIconOpen = () =>
     />
   </svg>;
 
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "/projects", label: "Projects" },
+  { href: "/writing", label: "Writing" },
+  { href: "/music", label: "Music" },
+  { href: "/photo", label: "Photo" },
+  { href: "/press", label: "Press" },
+  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "About" },
+  { href: "/lab", label: "Lab" }
+];
+
 const Navbar = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -69,51 +81,21 @@ const Navbar = () => {
   const navbarList = (
     <ul>
       <MenuIconOpen className={styles.mobileButton} onClick={toggleMenu} />
-      <li>
-        <Link href="/">
-          <a>Home</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/projects">
-          <a>Projects</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/writing">
-          <a>Writing</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/music">
-          <a>Music</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/photo">
-          <a>Photo</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/press">
-          <a>Press</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/blog">
-          <a>Blog</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/about">
-          <a>About</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/lab">
-          <a>Lab</a>
-        </Link>
-      </li>
+      {navItems.map(item => {
+        const isActive =
+          item.href === "/"
+            ? router.pathname === "/"
+            : router.pathname === item.href ||
+              router.pathname.startsWith(item.href + "/");
+
+        return (
+          <li key={item.href} className={isActive ? styles.active : ""}>
+            <Link href={item.href}>
+              <a>{item.label}</a>
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 

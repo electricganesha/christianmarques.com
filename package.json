@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=24.x"
+    "node": "22.x"
   },
   "scripts": {
-    "dev": "export NODE_OPTIONS=--openssl-legacy-provider; next dev",
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider; next build",
-    "postbuild": "export NODE_OPTIONS=--openssl-legacy-provider; next-sitemap",
-    "start": "export NODE_OPTIONS=--openssl-legacy-provider; next start",
-    "export": "export NODE_OPTIONS=--openssl-legacy-provider; next export",
-    "build-and-export": "export NODE_OPTIONS=--openssl-legacy-provider; next build && next export",
-    "build-export-deploy": "export NODE_OPTIONS=--openssl-legacy-provider; NODE_ENV=production && next build && next export && vercel --prod"
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider next dev",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider next build",
+    "postbuild": "NODE_OPTIONS=--openssl-legacy-provider next-sitemap",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider next start",
+    "export": "NODE_OPTIONS=--openssl-legacy-provider next export",
+    "build-and-export": "NODE_OPTIONS=--openssl-legacy-provider next build && NODE_OPTIONS=--openssl-legacy-provider next export",
+    "build-export-deploy": "NODE_OPTIONS=--openssl-legacy-provider next build && NODE_OPTIONS=--openssl-legacy-provider next export && NODE_OPTIONS=--openssl-legacy-provider vercel build --prod -y && vercel deploy --prebuilt --prod"
   },
   "dependencies": {
     "date-fns": "^2.22.1",

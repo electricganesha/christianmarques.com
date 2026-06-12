@@ -9,11 +9,14 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>
+      <div className={styles.titleContainer}>
         <img src="/hexagram55.png" alt="Hexagram 55" />
-        <span>Christian Marques</span>
+        <div className={styles.textContainer}>
+          <h1 className={styles.title}>Christian Marques</h1>
+          <p className={styles.subtitle}>creative technology & storytelling</p>
+        </div>
         <img src="/hexagram55.png" alt="Hexagram 55" />
-      </h1>
+      </div>
       <SocialMetaTags
         name={title}
         description={description}

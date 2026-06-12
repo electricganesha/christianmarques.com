@@ -12,6 +12,7 @@ module.exports = {
   },
   reactStrictMode: true,
   webpack: (config) => {
+    config.output.hashFunction = "sha256";
     config.module.rules.push({
       test: /\.(glsl|vs|fs|vert|frag)$/,
       use: ["raw-loader", "glslify-loader"],

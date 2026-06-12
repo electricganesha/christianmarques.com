@@ -50,7 +50,7 @@ const WebGLSnippet = () => {
         30,
         canvas.clientWidth / canvas.clientHeight,
         0.1,
-        1000
+        1000,
       );
 
       renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -73,6 +73,7 @@ const WebGLSnippet = () => {
       const positions = new Float32Array(sphereCount * 3);
       const scales = new Float32Array(sphereCount);
       const angles = new Float32Array(sphereCount);
+      const hovers = new Float32Array(sphereCount);
       let i = 0,
         j = 0;
 
@@ -95,10 +96,11 @@ const WebGLSnippet = () => {
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute(
         "position",
-        new THREE.BufferAttribute(positions, 3)
+        new THREE.BufferAttribute(positions, 3),
       );
       geometry.setAttribute("scale", new THREE.BufferAttribute(scales, 1));
       geometry.setAttribute("angle", new THREE.BufferAttribute(angles, 1));
+      geometry.setAttribute("hover", new THREE.BufferAttribute(hovers, 1));
       const material = new THREE.ShaderMaterial({
         uniforms: {
           time: { value: 0.0 },
@@ -109,6 +111,8 @@ const WebGLSnippet = () => {
         },
         vertexShader: sphereVertexShader,
         fragmentShader: sphereFragmentShader,
+        transparent: true,
+        depthWrite: false,
       });
 
       spheres = new THREE.Points(geometry, material);
@@ -127,7 +131,7 @@ const WebGLSnippet = () => {
           transparent: true,
           depthWrite: true,
           opacity: 0,
-        })
+        }),
       );
       scene.add(invisiblePlane);
       invisiblePlane.position.copy(spheres.position);
@@ -137,7 +141,7 @@ const WebGLSnippet = () => {
 
       // Raycaster for mouse interaction
       const raycaster = new THREE.Raycaster();
-      const mouse3D = new THREE.Vector3();
+      const mouse3D = new THREE.Vector3(10000, 10000, 10000);
       let targetClickState = 0.0;
 
       // Handle mouse/touch movement
@@ -208,7 +212,34 @@ const WebGLSnippet = () => {
       const clock = new THREE.Clock();
       function tick() {
         material.uniforms.time.value = clock.getElapsedTime();
-        material.uniforms.uMousePos.value = mouse3D;
+
+        if (mouse3D.x > 9000) {
+          material.uniforms.uMousePos.value.lerp(mouse3D, 0.15);
+        } else if (material.uniforms.uMousePos.value.x > 9000) {
+          material.uniforms.uMousePos.value.copy(mouse3D);
+        } else {
+          material.uniforms.uMousePos.value.copy(mouse3D);
+        }
+
+        // Animate each sphere's hover state individually for smooth sizing transitions
+        const hoverRadius = 350.0;
+        const positionsAttr = spheres.geometry.attributes.position.array;
+        const hoversAttr = spheres.geometry.attributes.hover.array;
+        const mx = mouse3D.x;
+        const my = mouse3D.y;
+        const mz = mouse3D.z;
+
+        for (let j = 0; j < sphereCount; j++) {
+          const idx = j * 3;
+          const dx = positionsAttr[idx] - mx;
+          const dy = positionsAttr[idx + 1] - my;
+          const dz = positionsAttr[idx + 2] - mz;
+          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+          const targetHover =
+            dist < hoverRadius ? 1.0 - dist / hoverRadius : 0.0;
+          hoversAttr[j] += (targetHover - hoversAttr[j]) * 0.08;
+        }
 
         // Smoothly animate click state with slower, more progressive transition
         const lerpSpeed = 0.1;
@@ -219,6 +250,7 @@ const WebGLSnippet = () => {
 
         spheres.geometry.attributes.position.needsUpdate = true;
         spheres.geometry.attributes.scale.needsUpdate = true;
+        spheres.geometry.attributes.hover.needsUpdate = true;
 
         renderer.render(scene, camera);
 
