@@ -153,8 +153,8 @@ void main() {
     gl_PointSize = scale * uSize * 12.0 * breathingFactor;
 
     // Add back the original "grid-movement" wave animation using arctangents
-    float sizeBoostX = position.x / 32.0 * scale * uSize * sin(slowedTime * modelPosition.x * 0.005) * atan(slowedTime * modelPosition.x * 0.005) * cos(slowedTime * modelPosition.x * 0.005);
-    float sizeBoostY = position.y / 16.0 * scale * uSize * sin(slowedTime * modelPosition.y * 0.005) * atan(slowedTime * modelPosition.y * 0.005) * cos(slowedTime * modelPosition.y * 0.005);
+    float sizeBoostX = position.x / 32.0 * scale * uSize * sin(slowedTime + modelPosition.x * 0.005) * atan(slowedTime + modelPosition.x * 0.005) * cos(slowedTime + modelPosition.x * 0.005);
+    float sizeBoostY = position.y / 16.0 * scale * uSize * sin(slowedTime + modelPosition.y * 0.005) * atan(slowedTime + modelPosition.y * 0.005) * cos(slowedTime + modelPosition.y * 0.005);
     gl_PointSize += sizeBoostX + sizeBoostY;
 
     // Increase dot size on hover with smooth falloff
