@@ -5,7 +5,6 @@ import "../node_modules/slick-carousel/slick/slick-theme.css";
 import Head from "next/head";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
-import FirebaseTag from "../components/FirebaseTag/FirebaseTag";
 import GoogleAnalyticsTag from "../components/GoogleAnalyticsTag/GoogleAnalyticsTag";
 
 function MyApp({ Component, pageProps }) {
@@ -29,8 +28,6 @@ function MyApp({ Component, pageProps }) {
           @import
           url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
         </style>
-        <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-analytics.js"></script>
       </Head>
       <Navbar />
       <main className="main">
@@ -38,7 +35,6 @@ function MyApp({ Component, pageProps }) {
       </main>
       <Footer />
       <GoogleAnalyticsTag />
-      <FirebaseTag />
     </Fragment>
   );
 }

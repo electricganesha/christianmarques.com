@@ -39,28 +39,45 @@ export default function About() {
         </p>
         <p>
           I graduated (B.Sc.) in Computer Science from the{" "}
-          <a href="https://ciencias.ulisboa.pt/" target="_blank">
+          <a
+            href="https://ciencias.ulisboa.pt/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Faculty of Sciences of the University of Lisbon
           </a>
           , and completed my M.Sc. in Information Systems in the same
           institution. I spent one full year in the{" "}
-          <a href="https://www.upc.edu/en" target="_blank">
+          <a
+            href="https://www.upc.edu/en"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Polytechnic Institute of Catalunya
           </a>{" "}
           (Barcelona) through the European interchange programme{" "}
-          <a href="https://erasmusprogramme.com/" target="_blank">
+          <a
+            href="https://erasmusprogramme.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Erasmus Mundus
           </a>
           . I also worked for almost two years at the research laboratory{" "}
           <a
             href="https://www.linkedin.com/company/labmag---laboratory-of-agent-modelling/about/"
             target="_blank"
+            rel="noopener noreferrer"
           >
             LabMAG
           </a>{" "}
           (Laboratório de Modelação de Agentes), where after delivering my
           thesis, I continued working on project{" "}
-          <a href="http://naadir.fa.utl.pt/" target="_blank">
+          <a
+            href="http://naadir.fa.utl.pt/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             NAADIR
           </a>
           .{" "}
@@ -74,7 +91,11 @@ export default function About() {
         <p>
           I have worked in various types of organization (academic,
           multinational, startup, etc) and am currently working at{" "}
-          <a href="https://www.promaton.com" target="_blank">
+          <a
+            href="https://www.promaton.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Promaton
           </a>
           , where I find a fulfilling day-by-day, complete with a purposeful
