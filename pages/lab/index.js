@@ -14,12 +14,18 @@ export default function Lab({ experiments }) {
   return (
     <div className={styles.container}>
       <SocialMetaTags
-        name="Christian Marques - Lab"
-        description="A section to house experiments, explorations and stuff that comes out of the process."
-        image="hhttps://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776904/christianmarques.com/website/lab.png"
+        name="Lab & Experiments — Christian Marques"
+        description="Interactive sketches, WebGL shaders, generative graphics, and creative computing explorations by Christian Marques."
+        image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776904/christianmarques.com/website/lab.png"
         url="https://christianmarques.com/lab/"
-        type={"listing"}
+        type="website"
       />
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Lab</h1>
+        <p className={styles.pageSubtitle}>
+          Interactive sketches, generative graphics, shaders, and creative computing explorations
+        </p>
+      </header>
       <div className={styles.grid}>
         {experiments.map((experiment) => (
           <ProjectCardSmall

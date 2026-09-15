@@ -16,12 +16,18 @@ export default function Projects(props) {
   return (
     <div className={styles.container}>
       <SocialMetaTags
-        name="Christian Marques - Music"
-        description="A selection of Christian Marques' musical projects, from experimental and noisy to melodic and traditional."
+        name="Music & Soundscapes — Christian Marques"
+        description="Sound design, ambient compositions, experimental noise, and collaborative albums by Christian Marques."
         image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776906/christianmarques.com/website/music.png"
         url="https://christianmarques.com/music/"
-        type={"article"}
+        type="website"
       />
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Music</h1>
+        <p className={styles.pageSubtitle}>
+          Sound design, ambient compositions, experimental noise, and collaborative albums
+        </p>
+      </header>
       <div className={styles.grid}>
         {music.map((musicItem) => (
           <ProjectCardSmall

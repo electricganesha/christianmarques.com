@@ -1,15 +1,188 @@
 .canvas {
+  pointer-events: none;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   box-sizing: border-box;
   overflow: hidden;
   position: fixed;
+  inset: 0;
   top: 0;
   left: 0;
+  z-index: 0;
 
   canvas {
     display: block;
     width: 100% !important;
     height: 100% !important;
+  }
+}
+
+.canvasFallback {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  position: fixed;
+  inset: 0;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.fallbackGrid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px,
+      #111111 1.5px,
+      transparent 0);
+  background-size: 32px 32px;
+  opacity: 0.12;
+}
+
+.loaderOverlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  margin-top: 32px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  pointer-events: none;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s ease;
+
+  &.loaderHidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.loaderContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  transform: translateY(115px);
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+
+  @media screen and (max-width: 480px) {
+    transform: translateY(92px);
+    gap: 12px;
+  }
+}
+
+.loaderIcon {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loaderRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(17, 17, 17, 0.28);
+  animation: loaderRotate 10s linear infinite;
+  will-change: transform;
+}
+
+.loaderDot {
+  width: 5px;
+  height: 5px;
+  background-color: #111111;
+  border-radius: 50%;
+  animation: loaderPulse 1.6s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+.loaderTextGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.loaderTitle {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #222222;
+}
+
+.loaderSubtitle {
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #888888;
+}
+
+@keyframes loaderRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loaderPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.35;
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0.95;
+  }
+}
+
+// This region participates in hit testing before the browser decides whether a
+// touch gesture pans the page. It scrolls away with the hero, unlike the canvas.
+.touchSurface {
+  display: none;
+
+  @media (hover: none) and (pointer: coarse) {
+    display: block;
+    position: absolute;
+    top: 64px;
+    left: 24px;
+    right: 24px;
+    height: calc(100vh - 224px);
+    height: calc(100svh - 224px);
+    z-index: 15;
+    pointer-events: auto;
+    touch-action: pinch-zoom;
+    user-select: none;
+    -webkit-user-select: none;
+
+    span {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      pointer-events: none;
+      font: 10px/1.4 system-ui, sans-serif;
+      color: #666;
+    }
   }
 }

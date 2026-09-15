@@ -6,6 +6,8 @@ import {
   cleanUpCloudinaryURL,
   convertToCloudinaryBlurURL,
 } from "../../utils/cloudinary";
+import { formatTag } from "../../utils/tagFormatter";
+import FormattedDescription from "../FormattedDescription/FormattedDescription";
 
 const ProjectCardLarge = ({ project, index, reversed = false }) => {
   return (
@@ -26,26 +28,28 @@ const ProjectCardLarge = ({ project, index, reversed = false }) => {
             (reversed ? " " + styles.reversed : "")
           }
         >
-          <div className={styles.projectCardLargeImage}>
-            <div className={styles.projectCardLargeImageInner}>
-              <Image
-                src={cleanUpCloudinaryURL(project.image)}
-                blurDataURL={convertToCloudinaryBlurURL(project.image)}
-                placeholder="blur"     
-                layout="fill"
-                alt={project.name}
-                className={styles.projectCardLargeImg}
-                loading="lazy"
-              />
-              <div className={styles.projectCardLargeOverlay}>
-                <div className={styles.projectCardLargeOverlayContent}>
-                  <div className={styles.projectCardLargeOverlayFlex}>
-                    <span className={styles.projectCardLargeOverlayText}>
-                      View Project
-                    </span>
-                    <ArrowUpRight
-                      className={styles.projectCardLargeOverlayArrow}
-                    />
+          <div className={styles.projectCardLargeImageWrapper}>
+            <div className={styles.projectCardLargeImage}>
+              <div className={styles.projectCardLargeImageInner}>
+                <Image
+                  src={cleanUpCloudinaryURL(project.image)}
+                  blurDataURL={convertToCloudinaryBlurURL(project.image)}
+                  placeholder="blur"     
+                  layout="fill"
+                  alt={project.name}
+                  className={styles.projectCardLargeImg}
+                  loading="lazy"
+                />
+                <div className={styles.projectCardLargeOverlay}>
+                  <div className={styles.projectCardLargeOverlayContent}>
+                    <div className={styles.projectCardLargeOverlayFlex}>
+                      <span className={styles.projectCardLargeOverlayText}>
+                        View Project
+                      </span>
+                      <ArrowUpRight
+                        className={styles.projectCardLargeOverlayArrow}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -65,7 +69,7 @@ const ProjectCardLarge = ({ project, index, reversed = false }) => {
             <h2 className={styles.projectCardLargeTitle}>{project.name}</h2>
           </div>
           <p className={styles.projectCardLargeDescription}>
-            {project.description}
+            <FormattedDescription text={project.summary || project.description} />
           </p>
           <div
             className={
@@ -78,7 +82,7 @@ const ProjectCardLarge = ({ project, index, reversed = false }) => {
                 key={tag}
                 className={styles.projectCardLargeTag}
               >
-                {tag}
+                {formatTag(tag)}
               </span>
             ))} 
           </div>

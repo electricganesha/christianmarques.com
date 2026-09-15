@@ -16,15 +16,26 @@ export default function Blog(props) {
   return (
     <div className={styles.container}>
       <SocialMetaTags
-        name="Christian Marques - Blog"
-        description="A selection of Christian Marques' blog posts, posted originally in Medium and ranging a variety of subjects."
+        name="Essays on Technology & Culture — Christian Marques"
+        description="Essays, deep dives, and technical writing on creative technology, mathematics, systems design, and digital culture by Christian Marques."
         image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776904/christianmarques.com/website/blog.png"
         url="https://christianmarques.com/blog/"
-        type={"article"}
+        type="website"
       />
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Blog</h1>
+        <p className={styles.pageSubtitle}>
+          Essays on creative technology, mathematics, systems, and digital culture
+        </p>
+      </header>
       <div className={styles.grid}>
         {posts.map((post, index) => (
-          <BlogCard post={post} reversed={index % 2 === 1} />
+          <BlogCard
+            key={post.guid || post.link || index}
+            post={post}
+            index={index}
+            reversed={index % 2 === 1}
+          />
         ))}
       </div>
     </div>

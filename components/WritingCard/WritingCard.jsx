@@ -7,6 +7,7 @@ import {
   convertToCloudinaryBlurURL,
   cleanUpCloudinaryURL
 } from "../../utils/cloudinary";
+import FormattedDescription from "../FormattedDescription/FormattedDescription";
 
 const WritingCard = ({project: writingItem}) => {
   return (
@@ -30,7 +31,7 @@ const WritingCard = ({project: writingItem}) => {
             src={cleanUpCloudinaryURL(writingItem.image)}
           />
           <div className={styles.writingCard__bold}>
-            {writingItem.description}
+            <FormattedDescription text={writingItem.description} />
           </div>
           {writingItem.publisher &&
             writingItem.publisher.length > 0 &&

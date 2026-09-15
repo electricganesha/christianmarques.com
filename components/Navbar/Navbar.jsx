@@ -4,17 +4,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { slide as Menu } from "react-burger-menu";
 import styles from "./Navbar.module.scss";
 
-const MenuIconClosed = isMenuOpen =>
+const MenuIconClosed = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6"
+    className={styles.menuIconSvg}
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
-    style={{
-      display: isMenuOpen ? "block" : "none",
-      zIndex: isMenuOpen ? "999" : "-1"
-    }}
+    aria-hidden="true"
   >
     <path
       strokeLinecap="round"
@@ -22,53 +19,57 @@ const MenuIconClosed = isMenuOpen =>
       strokeWidth="2"
       d="M4 6h16M4 12h16M4 18h16"
     />
-  </svg>;
+  </svg>
+);
 
-const MenuIconOpen = () =>
+const MenuIconOpen = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6"
+    className={styles.menuIconSvg}
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
+    aria-hidden="true"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2"
-      d="M4 6h16M4 12h16m-7 6h7"
+      d="M6 18L18 6M6 6l12 12"
     />
-  </svg>;
+  </svg>
+);
 
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/writing", label: "Writing" },
+  { href: "/blog", label: "Blog" },
+  { href: "/lab", label: "Lab" },
   { href: "/music", label: "Music" },
   { href: "/photo", label: "Photo" },
   { href: "/press", label: "Press" },
-  { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
-  { href: "/lab", label: "Lab" }
 ];
 
 const Navbar = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleMenu = useCallback(
-    () => {
-      setIsMenuOpen(!isMenuOpen);
-    },
-    [isMenuOpen, setIsMenuOpen]
-  );
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen((prev) => !prev);
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
 
   useEffect(() => {
     setIsMenuOpen(false);
 
     const handleRouteChange = () => {
       setIsMenuOpen(false);
-      document.body.scrollTop = 0;
+      window.scrollTo(0, 0);
     };
 
     router.events.on("routeChangeStart", handleRouteChange);
@@ -76,12 +77,11 @@ const Navbar = () => {
     return () => {
       router.events.off("routeChangeStart", handleRouteChange);
     };
-  }, []);
+  }, [router]);
 
-  const navbarList = (
-    <ul>
-      <MenuIconOpen className={styles.mobileButton} onClick={toggleMenu} />
-      {navItems.map(item => {
+  const renderNavLinks = (isMobileView = false) => (
+    <ul className={isMobileView ? styles.mobileNavList : styles.desktopNavList}>
+      {navItems.map((item) => {
         const isActive =
           item.href === "/"
             ? router.pathname === "/"
@@ -89,9 +89,18 @@ const Navbar = () => {
               router.pathname.startsWith(item.href + "/");
 
         return (
-          <li key={item.href} className={isActive ? styles.active : ""}>
-            <Link href={item.href}>
-              <a>{item.label}</a>
+          <li
+            key={item.href}
+            className={`${styles.navItem} ${isActive ? styles.active : ""}`}
+          >
+            <Link href={item.href} passHref legacyBehavior>
+              <a
+                onClick={closeMenu}
+                aria-current={isActive ? "page" : undefined}
+                className={styles.navLink}
+              >
+                {item.label}
+              </a>
             </Link>
           </li>
         );
@@ -100,15 +109,29 @@ const Navbar = () => {
   );
 
   return (
-    <div className={styles.navBar}>
-      <button className={styles.mobileButton} onClick={toggleMenu}>
-        <MenuIconClosed />
-      </button>
-      {navbarList}
-      <Menu isOpen={isMenuOpen} onClose={toggleMenu}>
-        {navbarList}
-      </Menu>
-    </div>
+    <header className={styles.navBar} role="banner">
+      <nav aria-label="Main Navigation" className={styles.navContainer}>
+        <button
+          className={styles.mobileButton}
+          onClick={toggleMenu}
+          aria-label={isMenuOpen ? "Close menu" : "Open navigation menu"}
+          aria-expanded={isMenuOpen}
+        >
+          {isMenuOpen ? <MenuIconOpen /> : <MenuIconClosed />}
+        </button>
+
+        {renderNavLinks(false)}
+
+        <Menu
+          isOpen={isMenuOpen}
+          onClose={closeMenu}
+          customBurgerIcon={false}
+          customCrossIcon={false}
+        >
+          {renderNavLinks(true)}
+        </Menu>
+      </nav>
+    </header>
   );
 };
 

@@ -1,18 +1,112 @@
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import React from "react";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Compass,
+  Cpu,
+  Sparkles,
+} from "lucide-react";
 import styles from "./ProjectDetail.module.scss";
 import Image from "next/image";
 import {
   cleanUpCloudinaryURL,
   convertToCloudinaryBlurURL,
 } from "../../utils/cloudinary";
+import { formatTag } from "../../utils/tagFormatter";
 
-const ProjectDetail = ({ project, category }) => {
-  if (!project) {
-    return <Navigate to={`/${category}`} replace />;
+const cleanEmbedHtml = (html) => {
+  if (!html || typeof html !== "string") return "";
+  let cleaned = html.trim();
+  // Strip outer quotes if the database entry stored them as a quoted string
+  if (
+    (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+    (cleaned.startsWith("'") && cleaned.endsWith("'"))
+  ) {
+    cleaned = cleaned.slice(1, -1).trim();
+  }
+  return cleaned.replace(/[\u201C\u201D]/g, '"');
+};
+
+const extractMediaEmbeds = (project) => {
+  if (!project) return [];
+  const rawSources = [];
+
+  if (Array.isArray(project.embeds)) rawSources.push(...project.embeds);
+  if (Array.isArray(project.videos)) rawSources.push(...project.videos);
+  if (project.video) rawSources.push(project.video);
+  if (project.embed) rawSources.push(project.embed);
+
+  const embeds = [];
+
+  for (const raw of rawSources) {
+    if (!raw || typeof raw !== "string") continue;
+    let cleaned = raw.trim();
+    if (
+      (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+      (cleaned.startsWith("'") && cleaned.endsWith("'"))
+    ) {
+      cleaned = cleaned.slice(1, -1).trim();
+    }
+    cleaned = cleaned.replace(/[\u201C\u201D]/g, '"');
+
+    const iframeMatches = cleaned.match(/<iframe[\s\S]*?<\/iframe>/gi);
+    if (iframeMatches && iframeMatches.length > 0) {
+      for (const iframe of iframeMatches) {
+        embeds.push(iframe.trim());
+      }
+    } else if (
+      cleaned.includes("<iframe") ||
+      cleaned.includes("<object") ||
+      cleaned.includes("<embed")
+    ) {
+      embeds.push(cleaned);
+    }
   }
 
+  return Array.from(new Set(embeds));
+};
+
+const isVideoEmbed = (html) => {
+  return /youtube\.com|youtu\.be|vimeo\.com/i.test(html);
+};
+
+const ProjectDetail = ({ project, category = "projects", lang }) => {
+  if (!project) {
+    return (
+      <div className={styles.contentContainer} style={{ padding: "120px 24px", textAlign: "center" }} lang={lang}>
+        <p>Project details unavailable.</p>
+        <Link href={`/${category}`} passHref legacyBehavior>
+          <a className={styles.backLink}>
+            <ArrowLeft className={styles.backIcon} /> Back to {category}
+          </a>
+        </Link>
+      </div>
+    );
+  }
+
+  // Check if project has structured case study fields populated in DB
+  const caseStudy =
+    project.caseStudy ||
+    (project.theChallenge || project.myRole || project.architecture || project.keyOutcomes || project.outcomeAndLearning
+      ? {
+          theChallenge: project.theChallenge,
+          myRole: project.myRole,
+          architecture: project.architecture,
+          keyOutcomes: project.keyOutcomes,
+          outcomeAndLearning: project.outcomeAndLearning,
+          metrics: project.metrics,
+        }
+      : null);
+
+  const metrics = project.metrics || caseStudy?.metrics || null;
+  const embeds = extractMediaEmbeds(project);
+  const hasGallery = Boolean(
+    project.gallery?.length || embeds.length > 0
+  );
+
   return (
-    <>
+    <article lang={lang}>
       {/* Hero */}
       <section className={styles.heroSection}>
         <div className={styles.heroImageWrapper}>
@@ -21,19 +115,22 @@ const ProjectDetail = ({ project, category }) => {
             blurDataURL={convertToCloudinaryBlurURL(project.image)}
             placeholder="blur"
             layout="fill"
-            alt={project.name}
+            alt={project.name || "Project preview"}
             className={styles.heroImage}
+            priority
           />
           <div className={styles.heroGradient} />
         </div>
         <div className={styles.heroContent}>
-          <a href={`/${category}`} className={styles.backLink}>
-            <ArrowLeft className={styles.backIcon} /> Back to{" "}
-            {category.charAt(0).toUpperCase() + category.slice(1)}
-          </a>
+          <Link href={`/${category}`} passHref legacyBehavior>
+            <a className={styles.backLink}>
+              <ArrowLeft className={styles.backIcon} /> Back to{" "}
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </a>
+          </Link>
           <div className={styles.heroTextWrapper}>
             <div className={styles.heroMeta}>
-              <span className={styles.heroCategory}>{project.category}</span>
+              <span className={styles.heroCategory}>{project.category || "Project"}</span>
               <span className={styles.heroDot}>•</span>
               <span className={styles.heroDate}>
                 {project.date &&
@@ -49,11 +146,10 @@ const ProjectDetail = ({ project, category }) => {
             </div>
             <h1 className={styles.heroTitle}>{project.name}</h1>
             <div className={styles.heroTags}>
-              {project &&
-                project.tags &&
+              {project.tags &&
                 project.tags.map((tag) => (
                   <span key={tag} className={styles.heroTag}>
-                    {tag}
+                    {formatTag(tag)}
                   </span>
                 ))}
             </div>
@@ -61,32 +157,168 @@ const ProjectDetail = ({ project, category }) => {
         </div>
       </section>
 
-      {/* Content */}
+      {/* Dynamic Key Metrics Banner (rendered when populated in DB) */}
+      {metrics && Array.isArray(metrics) && metrics.length > 0 && (
+        <section className={styles.metricsSection} aria-label="Key Project Metrics">
+          <div className={styles.metricsContainer}>
+            <div className={styles.metricsGrid}>
+              {metrics.map((metric, idx) => (
+                <div key={idx} className={styles.metricCard}>
+                  {metric.value && <div className={styles.metricValue}>{metric.value}</div>}
+                  {metric.label && <div className={styles.metricLabel}>{metric.label}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Content Section */}
       <section className={styles.contentSection}>
         <div className={styles.contentContainer}>
           <div className={styles.contentGrid}>
-            {/* Sidebar */}
+            {/* Main Content Column */}
+            <div className={styles.mainColumn}>
+              {caseStudy ? (
+                /* Structured Case Study View */
+                <div className={styles.caseStudyContainer}>
+                  {/* The Idea & Challenge */}
+                  {caseStudy.theChallenge && (
+                    <article className={styles.caseStudyBlock}>
+                      <div className={styles.blockHeader}>
+                        <Compass className={styles.blockIcon} size={22} />
+                        <h2 className={styles.caseStudyHeading}>The Idea & Challenge</h2>
+                      </div>
+                      <div
+                        className={styles.caseStudyText}
+                        dangerouslySetInnerHTML={{ __html: caseStudy.theChallenge }}
+                      />
+                    </article>
+                  )}
+
+                  {/* Role & Scope */}
+                  {caseStudy.myRole && (
+                    <article className={styles.caseStudyBlock}>
+                      <div className={styles.blockHeader}>
+                        <Cpu className={styles.blockIcon} size={22} />
+                        <h2 className={styles.caseStudyHeading}>Role & Technical Scope</h2>
+                      </div>
+                      <div
+                        className={styles.caseStudyText}
+                        dangerouslySetInnerHTML={{ __html: caseStudy.myRole }}
+                      />
+                    </article>
+                  )}
+
+                  {/* Outcome & Learning */}
+                  {(caseStudy.outcomeAndLearning || caseStudy.keyOutcomes || caseStudy.outcome) && (
+                    <article className={styles.caseStudyBlock}>
+                      <div className={styles.blockHeader}>
+                        <Sparkles className={styles.blockIcon} size={22} />
+                        <h2 className={styles.caseStudyHeading}>Outcome & Learning</h2>
+                      </div>
+                      {(() => {
+                        const outcomeData =
+                          caseStudy.outcomeAndLearning || caseStudy.keyOutcomes || caseStudy.outcome;
+                        if (typeof outcomeData === "string") {
+                          return (
+                            <div
+                              className={styles.caseStudyText}
+                              dangerouslySetInnerHTML={{ __html: outcomeData }}
+                            />
+                          );
+                        }
+                        if (Array.isArray(outcomeData)) {
+                          return (
+                            <div className={styles.caseStudyText}>
+                              <ul className={styles.caseStudyList}>
+                                {outcomeData.map((item, idx) => (
+                                  <li
+                                    key={idx}
+                                    className={styles.caseStudyListItem}
+                                    dangerouslySetInnerHTML={{ __html: item }}
+                                  />
+                                ))}
+                              </ul>
+                            </div>
+                          );
+                        }
+                        if (typeof outcomeData === "object") {
+                          return (
+                            <div className={styles.caseStudyText}>
+                              {outcomeData.summary && (
+                                <p dangerouslySetInnerHTML={{ __html: outcomeData.summary }} />
+                              )}
+                              {Array.isArray(outcomeData.points) && outcomeData.points.length > 0 && (
+                                <ul className={styles.caseStudyList}>
+                                  {outcomeData.points.map((pt, idx) => (
+                                    <li
+                                      key={idx}
+                                      className={styles.caseStudyListItem}
+                                      dangerouslySetInnerHTML={{ __html: pt }}
+                                    />
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </article>
+                  )}
+
+
+
+                  {/* Additional Context/Text */}
+                  {project.text && (
+                    <article className={styles.caseStudyBlock}>
+                      <h2 className={styles.caseStudyHeading}>Historical Context & Notes</h2>
+                      <div
+                        className={styles.caseStudyText}
+                        dangerouslySetInnerHTML={{ __html: project.text }}
+                      />
+                    </article>
+                  )}
+                </div>
+              ) : (
+                /* Standard Narrative for projects without case study fields */
+                <div className={styles.standardContainer}>
+                  <div className={styles.textBlock}>
+                    <h2 className={styles.sidebarHeading}>About the Project</h2>
+                    <div
+                      className={styles.sidebarDescription}
+                      dangerouslySetInnerHTML={{ __html: project.description }}
+                    />
+                  </div>
+
+                  {project.text && (
+                    <div className={styles.textBlock}>
+                      <h2 className={styles.sidebarHeading}>Details & Background</h2>
+                      <div
+                        className={styles.sidebarDescription}
+                        dangerouslySetInnerHTML={{ __html: project.text }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Sidebar Column: Links, Publisher, Metadata */}
             <aside className={styles.sidebar}>
               <div className={styles.sidebarContent}>
-                <div>
-                  <h2 className={styles.sidebarHeading}>About</h2>
-                  <p className={styles.sidebarDescription} dangerouslySetInnerHTML={{ __html: project.description }}></p>
-                  {project && project.text ? (
-                    <p
-                      className={styles.sidebarDescription}
-                      dangerouslySetInnerHTML={{ __html: project.text }}
-                    ></p>
-                  ) : null}
-                </div>
-
+                {/* External Links */}
                 {project.link && project.link.length > 0 && (
-                  <div>
-                    <h2 className={styles.sidebarHeading}>Links</h2>
+                  <div className={styles.sidebarSection}>
+                    <h3 className={styles.sidebarHeading}>Project Links</h3>
                     <div className={styles.sidebarLinks}>
                       <a
                         key={project.link[0]}
                         href={project.link[1]}
                         className={styles.sidebarLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
                         <span className={styles.sidebarLinkLabel}>
                           {project.link[0]}
@@ -98,6 +330,8 @@ const ProjectDetail = ({ project, category }) => {
                           key={project.link2[0]}
                           href={project.link2[1]}
                           className={styles.sidebarLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           <span className={styles.sidebarLinkLabel}>
                             {project.link2[0]}
@@ -109,14 +343,17 @@ const ProjectDetail = ({ project, category }) => {
                   </div>
                 )}
 
+                {/* Publisher */}
                 {project.publisher && project.publisher.length > 0 && (
-                  <div>
-                    <h2 className={styles.sidebarHeading}>Publisher</h2>
+                  <div className={styles.sidebarSection}>
+                    <h3 className={styles.sidebarHeading}>Publisher / Context</h3>
                     <div className={styles.sidebarLinks}>
                       <a
                         key={project.publisher[0]}
                         href={project.publisher[1]}
                         className={styles.sidebarLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
                         <span className={styles.sidebarLinkLabel}>
                           {project.publisher[0]}
@@ -126,81 +363,73 @@ const ProjectDetail = ({ project, category }) => {
                     </div>
                   </div>
                 )}
-              </div>
-            </aside>
 
-            {project && (project.gallery || project.video || project.embed) ? (
-              <div className={styles.gallery}>
-                <h2 className={styles.galleryHeading}>Gallery</h2>
-                <div className={styles.galleryList}>
-                  {project && (project.video || project.embed) && (
-                    <div
-                      className={styles.galleryEmbedWrapper}
-                      style={{ animationDelay: `${1 * 0.1}s` }}
-                    >
-                      <div
-                        className={styles.embed}
-                        dangerouslySetInnerHTML={{ __html: project.video || project.embed }}
-                      />
+                {/* Quick Spec Card */}
+                <div className={styles.quickSpecCard}>
+                  <h4 className={styles.specTitle}>Metadata</h4>
+                  <div className={styles.specRow}>
+                    <span className={styles.specLabel}>Category:</span>
+                    <span className={styles.specVal}>{project.category || "Interactive"}</span>
+                  </div>
+                  {project.tags && project.tags.length > 0 && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>Primary Stack:</span>
+                      <span className={styles.specVal}>{project.tags.slice(0, 4).map((t) => formatTag(t)).join(", ")}</span>
                     </div>
                   )}
-                  {project &&
-                    project.gallery &&
-                    project.gallery.map((image, index) => (
-                      <div
-                        key={index}
-                        className={styles.galleryImageWrapper}
-                        style={{ animationDelay: `${index * 0.1}s` }}
-                      >
-                        <Image
-                          src={cleanUpCloudinaryURL(image)}
-                          blurDataURL={convertToCloudinaryBlurURL(image)}
-                          placeholder="blur"
-                          layout="fill"
-                          alt={`${project.name} - Image ${index + 1}`}
-                          className={styles.galleryImage}
-                          loading="lazy"
-                        />
-                      </div>
-                    ))}
                 </div>
               </div>
-            ) : null}
+            </aside>
           </div>
+
+          {/* Media & Visuals Gallery Section */}
+          {hasGallery && (
+            <div className={styles.mediaGallerySection}>
+              <h2 className={styles.gallerySectionHeading}>Project Media & Visuals</h2>
+              <div className={styles.galleryList}>
+                {/* Embedded Media (Videos, Audio Players, Widgets) */}
+                {embeds.map((embedHtml, index) => {
+                  const isVideo = isVideoEmbed(embedHtml);
+                  return (
+                    <div
+                      key={`embed-${index}`}
+                      className={
+                        isVideo
+                          ? styles.galleryEmbedVideoWrapper
+                          : styles.galleryEmbedAudioWrapper
+                      }
+                    >
+                      <div
+                        className={isVideo ? styles.embedVideo : styles.embedAudio}
+                        dangerouslySetInnerHTML={{
+                          __html: cleanEmbedHtml(embedHtml),
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+
+                {/* Image Gallery */}
+                {project.gallery &&
+                  project.gallery.map((image, index) => (
+                    <div key={index} className={styles.galleryImageWrapper}>
+                      <Image
+                        src={cleanUpCloudinaryURL(image)}
+                        blurDataURL={convertToCloudinaryBlurURL(image)}
+                        placeholder="blur"
+                        layout="fill"
+                        alt={`${project.name} - Visual ${index + 1}`}
+                        className={styles.galleryImage}
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
-
-      {/* Navigation */}
-      {/* <section className={styles.navSection}>
-        <div className={styles.navContainer}>
-          <div className={styles.navGrid}>
-            <Link href={`/project/${prevProject.id}`} passHref legacyBehavior>
-              <a className={styles.navPrev}>
-                <div className={styles.navPrevInner}>
-                  <ArrowLeft className={styles.navPrevIcon} />
-                  <div>
-                    <span className={styles.navLabelPrev}>Previous</span>
-                    <span className={styles.navTitlePrev}>{prevProject.title}</span>
-                  </div>
-                </div>
-              </a>
-            </Link>
-
-            <Link href={`/project/${nextProject.id}`} passHref legacyBehavior>
-              <a className={styles.navNext}>
-                <div className={styles.navNextInner}>
-                  <div>
-                    <span className={styles.navLabelNext}>Next</span>
-                    <span className={styles.navTitleNext}>{nextProject.title}</span>
-                  </div>
-                  <ArrowUpRight className={styles.navNextIcon} />
-                </div>
-              </a>
-            </Link>
-          </div>
-        </div>
-      </section> */}
-    </>
+    </article>
   );
 };
 

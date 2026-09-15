@@ -1,57 +1,93 @@
-import React, { useRef, useLayoutEffect, useState } from "react";
+import React, { useRef, useLayoutEffect, useState, useMemo, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import styles from "./ProjectCardSmall.module.scss";
+import { getOptimizedCloudinaryUrl, getCloudinarySrcSet } from "../../utils/cloudinary";
+import { formatTag } from "../../utils/tagFormatter";
+import FormattedDescription from "../FormattedDescription/FormattedDescription";
 
 const ProjectCardSmall = ({ project, index, category }) => {
   const tagsRef = useRef(null);
-  const [visibleCount, setVisibleCount] = useState(project.tags ? project.tags.length : 0);
+  const measureRef = useRef(null);
+  const sortedTags = useMemo(() => {
+    return project.tags ? [...project.tags].sort((a, b) => a.localeCompare(b)) : [];
+  }, [project.tags]);
+
+  const [visibleCount, setVisibleCount] = useState(
+    sortedTags.length <= 1 ? sortedTags.length : 1
+  );
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipPos, setTooltipPos] = useState({ left: 0, top: 0, width: 0 });
   const moreRef = useRef(null);
 
-  useLayoutEffect(() => {
-    if (!tagsRef.current || !project.tags) return;
-    const container = tagsRef.current;
-    const children = Array.from(container.children);
-    // Find the ellipsis span (if present)
-    let ellipsisWidth = 0;
-    let tagSpans = children;
-    // Temporarily render all tags and the ellipsis to measure
-    if (children.length > project.tags.length) {
-      ellipsisWidth = children[children.length - 1].offsetWidth + 8;
-      tagSpans = children.slice(0, -1);
-    } else {
-      // Create a temp span for ellipsis if needed
-      const temp = document.createElement('span');
-      temp.className = styles.cardTag;
-      temp.style.visibility = 'hidden';
-      temp.textContent = '…';
-      container.appendChild(temp);
-      ellipsisWidth = temp.offsetWidth + 8;
-      container.removeChild(temp);
-    }
-    let totalWidth = 0;
-    let fitCount = 0;
-    for (let i = 0; i < tagSpans.length; i++) {
-      const child = tagSpans[i];
-      // If not all tags fit, reserve space for ellipsis
-      const reserve = (i < project.tags.length - 1) ? ellipsisWidth : 0;
-      if (totalWidth + child.offsetWidth + 8 + reserve > container.offsetWidth) break;
-      totalWidth += child.offsetWidth + 8;
-      fitCount++;
-    }
-    setVisibleCount(fitCount);
-  }, [project.tags]);
+  const calculateFit = useCallback(() => {
+    if (!tagsRef.current || !measureRef.current || sortedTags.length === 0) return;
+    const containerWidth = tagsRef.current.offsetWidth;
+    if (containerWidth <= 0) return;
 
-  // Tooltip portal logic
-  React.useEffect(() => {
+    const measureSpans = Array.from(
+      measureRef.current.querySelectorAll(`.${styles.cardTag}`)
+    );
+    const moreSpan = measureRef.current.querySelector(`.${styles.cardTagMore}`);
+    const gap = 8; // 0.5rem gap
+    const moreWidth = (moreSpan ? moreSpan.offsetWidth : 36) + gap;
+
+    let accumulated = 0;
+    let fit = 0;
+    for (let i = 0; i < sortedTags.length; i++) {
+      const tagEl = measureSpans[i];
+      if (!tagEl) break;
+      const tagWidth = tagEl.offsetWidth;
+      const isLast = i === sortedTags.length - 1;
+      const needed = isLast ? tagWidth : tagWidth + gap + moreWidth;
+
+      if (accumulated + needed <= containerWidth) {
+        accumulated += tagWidth + gap;
+        fit = i + 1;
+      } else {
+        break;
+      }
+    }
+
+    setVisibleCount(Math.max(1, fit));
+  }, [sortedTags]);
+
+  useLayoutEffect(() => {
+    calculateFit();
+  }, [calculateFit]);
+
+  useEffect(() => {
+    if (!tagsRef.current) return;
+    let observer = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => {
+        calculateFit();
+      });
+      observer.observe(tagsRef.current);
+    } else {
+      window.addEventListener("resize", calculateFit);
+    }
+    return () => {
+      if (observer) observer.disconnect();
+      else window.removeEventListener("resize", calculateFit);
+    };
+  }, [calculateFit]);
+
+  useEffect(() => {
     if (tooltipOpen && moreRef.current) {
       const rect = moreRef.current.getBoundingClientRect();
+      const tooltipWidth = Math.min(300, window.innerWidth - 32);
+      let left = rect.left;
+      if (left + tooltipWidth > window.innerWidth - 16) {
+        left = window.innerWidth - tooltipWidth - 16;
+      }
+      if (left < 16) left = 16;
+
+      const top = rect.top - 8;
       setTooltipPos({
-        left: rect.right + window.scrollX + 12, // 12px margin to the right
-        top: rect.top + window.scrollY - 8,     // 8px above the ellipsis
-        width: rect.width
+        left,
+        top,
+        width: rect.width,
       });
     }
   }, [tooltipOpen]);
@@ -61,15 +97,19 @@ const ProjectCardSmall = ({ project, index, category }) => {
       <Link href={`/${category}/${project.slug}`} passHref legacyBehavior>
         <a
           className={styles.cardLink}
-          style={{ animationDelay: `${index * 0.1}s` }}
+          style={{ animationDelay: `${index * 0.05}s` }}
         >
           <article className={styles.card}>
             <div className={styles.cardImageWrapper}>
               <img
-                src={project.image}
+                src={getOptimizedCloudinaryUrl(project.image, { width: 400 })}
+                srcSet={getCloudinarySrcSet(project.image, [300, 400, 600])}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
                 alt={project.name}
                 className={styles.cardImage}
                 loading="lazy"
+                width={380}
+                height={214}
               />
               {project.wip && (
                 <img
@@ -99,14 +139,16 @@ const ProjectCardSmall = ({ project, index, category }) => {
                     : project.date}
                 </span>
               </div>
-              <p className={styles.cardDescription} dangerouslySetInnerHTML={{__html: project.description}}/>
+              <p className={styles.cardDescription}>
+                <FormattedDescription text={project.summary || project.description} />
+              </p>
               <div className={styles.cardTags} ref={tagsRef}>
-                {project.tags && project.tags.sort((a, b) => a.localeCompare(b)).slice(0, visibleCount).map((tag) => (
+                {sortedTags.slice(0, visibleCount).map((tag) => (
                   <span key={tag} className={styles.cardTag}>
-                    {tag}
+                    {formatTag(tag)}
                   </span>
                 ))}
-                {project.tags && visibleCount < project.tags.length && (
+                {visibleCount < sortedTags.length && (
                   <span
                     className={styles.cardTagMore}
                     key="more"
@@ -118,8 +160,9 @@ const ProjectCardSmall = ({ project, index, category }) => {
                     onBlur={() => setTooltipOpen(false)}
                     aria-haspopup="true"
                     aria-expanded={tooltipOpen}
+                    aria-label={`Show ${sortedTags.length - visibleCount} more tags`}
                   >
-                    …
+                    +{sortedTags.length - visibleCount}
                   </span>
                 )}
               </div>
@@ -127,20 +170,36 @@ const ProjectCardSmall = ({ project, index, category }) => {
           </article>
         </a>
       </Link>
-      {tooltipOpen && createPortal(
+      {sortedTags.length > 0 && (
+        <div
+          ref={measureRef}
+          className={styles.measureContainer}
+          aria-hidden="true"
+        >
+          {sortedTags.map((tag) => (
+            <span key={tag} className={styles.cardTag}>
+              {formatTag(tag)}
+            </span>
+          ))}
+          <span className={styles.cardTagMore}>+{sortedTags.length}</span>
+        </div>
+      )}
+      {tooltipOpen && typeof window !== "undefined" && createPortal(
         <div
           className={styles.tagsTooltip}
           style={{
-            position: 'absolute',
-            left: tooltipPos.left,
-            top: tooltipPos.top,
+            position: 'fixed',
+            left: `${tooltipPos.left}px`,
+            top: `${tooltipPos.top}px`,
+            transform: 'translateY(-100%)',
+            maxWidth: 'calc(100vw - 32px)',
             zIndex: 99999
           }}
           onMouseEnter={() => setTooltipOpen(true)}
           onMouseLeave={() => setTooltipOpen(false)}
         >
-          {project.tags.sort((a, b) => a.localeCompare(b)).map((tag) => (
-            <span key={tag} className={styles.cardTag}>{tag}</span>
+          {sortedTags.map((tag) => (
+            <span key={tag} className={styles.cardTag}>{formatTag(tag)}</span>
           ))}
         </div>,
         document.body

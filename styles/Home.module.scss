@@ -1,20 +1,36 @@
 .container {
   width: 100%;
-  height: 100vh;
-  padding: 0;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  min-height: 100vh;
   position: relative;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroSection {
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  padding: 0;
+  pointer-events: none;
 }
 
 .titleContainer {
-  background-color: rgba(255, 255, 255, 0.95);
+  -webkit-user-select: none;
+  user-select: none;
+  background-color: rgba(255, 255, 255, 0.82);
+  width: 100%;
   padding: 24px 16px;
-  border-radius: 4px;
   display: flex;
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
@@ -24,27 +40,48 @@
   flex-direction: row;
   text-align: center;
   pointer-events: none;
-  gap: 24px;
-  width: 100%;
-  height: auto;
+  gap: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 
-  img {
-    width: 3rem;
-    height: 3rem;
-    margin: 0;
+  @media screen and (max-width: 480px) {
+    gap: 12px;
+    padding: 20px 8px;
   }
 
   @media screen and (min-width: 768px) {
-    top: 50%;
     gap: 64px;
-    height: 240px;
+    height: 140px;
     padding: 0 32px;
+  }
 
-    img {
-      width: 6rem;
-      height: 6rem;
-      margin: 0;
-    }
+  @media screen and (min-width: 1200px) {
+    gap: 80px;
+    height: 160px;
+    padding: 0 48px;
+  }
+}
+
+.hexagramIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+  flex-shrink: 0;
+  pointer-events: none;
+
+  @media screen and (max-width: 480px) {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  @media screen and (min-width: 768px) {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  @media screen and (min-width: 1200px) {
+    width: 6rem;
+    height: 6rem;
   }
 }
 
@@ -54,6 +91,7 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
+  pointer-events: none;
 
   @media screen and (min-width: 768px) {
     gap: 8px;
@@ -62,25 +100,327 @@
 
 .title {
   margin: 0;
-  font-size: 2rem;
-  line-height: 1.1;
-  font-family: "Playfair Display", serif;
+  font-size: clamp(2rem, 5.2vw, 4.75rem);
+  line-height: 1.05;
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: normal;
+  letter-spacing: -0.01em;
+  color: #111111;
+  white-space: nowrap;
 
-  @media screen and (min-width: 768px) {
-    font-size: 7.5rem;
-  }
+
 }
 
 .subtitle {
   margin: 0;
-  font-family: "Playfair Display", serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-style: italic;
-  font-size: 1.1rem;
-  color: #777;
+  font-size: clamp(1rem, 1.8vw, 1.5rem);
+  color: #555555;
   text-align: center;
   text-transform: lowercase;
+}
+
+.scrollIndicator {
+  -webkit-user-select: none;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  color: #333333;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+  z-index: 20;
+  white-space: nowrap;
+
+  // Nearly full width on mobile so text never wraps
+  width: calc(100% - 48px);
+  max-width: 360px;
 
   @media screen and (min-width: 768px) {
-    font-size: 1.5rem;
+    width: auto;
+    max-width: none;
+    bottom: 64px;
+    font-size: 1.0rem;
+  }
+
+  &:hover {
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.scrollArrow {
+  transition: transform 0.2s ease;
+}
+
+.scrollIndicator:hover .scrollArrow {
+  transform: translateY(2px);
+}
+
+// Featured Work Section
+.featuredSection {
+  position: relative;
+  z-index: 10;
+  background: #ffffff;
+  padding: 96px 24px 128px 24px;
+  border-top: 1px solid #eaeaea;
+
+  @media screen and (min-width: 768px) {
+    padding: 112px 48px 144px 48px;
+  }
+}
+
+.featuredContent {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.sectionOverline {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #666666;
+  margin-bottom: 8px;
+  display: block;
+  font-weight: 600;
+}
+
+.sectionTitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2.75rem;
+  font-weight: normal;
+  margin: 0 0 12px 0;
+  color: #111111;
+  letter-spacing: -0.02em;
+
+  @media screen and (min-width: 768px) {
+    font-size: 3.5rem;
+  }
+}
+
+.sectionSubtitle {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #555555;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.featuredGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  @media screen and (min-width: 960px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.featuredCard {
+  display: flex;
+  flex-direction: column;
+  height: 310px;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.25s ease;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: #000000;
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.cardMediaWrapper {
+  position: relative;
+  width: 100%;
+  height: 130px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #f4f4f4;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+
+  .featuredCard:hover & {
+    transform: scale(1.04);
+  }
+}
+
+.categoryBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #ffffff;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 2px;
+  backdrop-filter: blur(4px);
+}
+
+.cardBody {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.cardTitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #111111;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardDescription {
+  font-size: 0.85rem;
+  line-height: 1.42;
+  color: #555555;
+  margin: 0 0 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  height: 22px;
+}
+
+.cardTag {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  background: #f6f6f6;
+  border: 1px solid #e2e2e2;
+  border-radius: 2px;
+  color: #444444;
+  white-space: nowrap;
+}
+
+.cardAction {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #111111;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: auto;
+
+  .featuredCard:hover & .actionArrow {
+    transform: translateX(4px);
+  }
+}
+
+.actionText {
+  letter-spacing: 0.01em;
+}
+
+.actionArrow {
+  transition: transform 0.2s ease;
+}
+
+.viewAllContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 64px;
+}
+
+.viewAllButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: #000000;
+  color: #ffffff !important;
+  border: 1px solid #000000;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #333333;
+    border-color: #333333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: transparent;
+  color: #111111 !important;
+  border: 1px solid #111111;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f4f4f4;
+    color: #000000 !important;
+    transform: translateY(-1px);
   }
 }

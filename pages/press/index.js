@@ -16,12 +16,18 @@ export default function Press(props) {
   return (
     <div className={styles.container}>
       <SocialMetaTags
-        name="Christian Marques - Press"
-        description="Interviews, conferences, public appearances, and any social related content for Christian Marques."
+        name="Press & Media Features — Christian Marques"
+        description="Interviews, conference talks, podcast appearances, and media features covering Christian Marques."
         image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776906/christianmarques.com/website/press.png"
         url="https://christianmarques.com/press/"
-        type={"article"}
+        type="website"
       />
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Press</h1>
+        <p className={styles.pageSubtitle}>
+          Interviews, conference talks, podcast appearances, and media features
+        </p>
+      </header>
       <div className={styles.grid}>
         {press.map((item) => (
           <ProjectCardSmall key={item.id} project={item} category="press" />

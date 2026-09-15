@@ -1,0 +1,20 @@
+.inlineLink {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+    color: #111111;
+  }
+}
+
+.code {
+  font-family: monospace;
+  font-size: 0.9em;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 1px 4px;
+  border-radius: 3px;
+}

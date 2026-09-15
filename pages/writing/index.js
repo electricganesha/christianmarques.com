@@ -15,12 +15,18 @@ export default function Projects(props) {
   return (
     <div className={styles.container}>
       <SocialMetaTags
-        name="Christian Marques - Writing"
-        description="A selection of Christian Marques' writing projects, published books, poetic anthologies and pamphlets/zines."
+        name="Writing & Publications — Christian Marques"
+        description="Published books, poetic anthologies, pamphlets, and selected literary projects by Christian Marques."
         image="https://res.cloudinary.com/dhgkpiqzg/image/upload/v1767776908/christianmarques.com/website/writing.png"
         url="https://christianmarques.com/writing/"
-        type={"article"}
+        type="website"
       />
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Writing</h1>
+        <p className={styles.pageSubtitle}>
+          Published books, poetic anthologies, pamphlets, and selected essays
+        </p>
+      </header>
       <div className={styles.grid}>
         {writing.map((project, index) => (
           <ProjectCardLarge
