@@ -1,4 +1,5 @@
-import { Fragment } from "react";
+import { Fragment, useState, useEffect } from "react";
+import Router from "next/router";
 import "../styles/globals.scss";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -6,8 +7,34 @@ import Head from "next/head";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
 import GoogleAnalyticsTag from "../components/GoogleAnalyticsTag/GoogleAnalyticsTag";
+import WebGLTransition from "../components/PageTransition/WebGLTransition";
 
 function MyApp({ Component, pageProps }) {
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  useEffect(() => {
+    const handleStart = (url) => {
+      const currentPath = (Router.asPath || "").split("#")[0];
+      const targetPath = (url || "").split("#")[0];
+      if (currentPath !== targetPath) {
+        setIsNavigating(true);
+      }
+    };
+    const handleComplete = () => {
+      setIsNavigating(false);
+    };
+
+    Router.events.on("routeChangeStart", handleStart);
+    Router.events.on("routeChangeComplete", handleComplete);
+    Router.events.on("routeChangeError", handleComplete);
+
+    return () => {
+      Router.events.off("routeChangeStart", handleStart);
+      Router.events.off("routeChangeComplete", handleComplete);
+      Router.events.off("routeChangeError", handleComplete);
+    };
+  }, []);
+
   const title = `Christian Marques . ${new Date().getFullYear()}`;
   const description =
     "Christian Marques - software engineer - official website.";
@@ -31,6 +58,7 @@ function MyApp({ Component, pageProps }) {
         <Component {...pageProps} />
       </main>
       <Footer />
+      <WebGLTransition />
       <GoogleAnalyticsTag />
     </Fragment>
   );

@@ -240,17 +240,6 @@ const WebGLSnippet = ({ onInteraction }) => {
           </div>
         </div>
       </div>
-      {ready &&
-        createPortal(
-          <div
-            className={styles.touchSurface}
-            data-ganesha-touch
-            aria-hidden="true"
-          >
-            <span>Drag to interact · swipe below to scroll</span>
-          </div>,
-          document.body,
-        )}
       <SoundControl
         enabled={soundEnabled}
         busy={soundBusy}
