@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Image from "next/image";
+import Head from "next/head";
 import { Linkedin, Github, BookOpen, Mail, ExternalLink } from "lucide-react";
 import db from "../../utils/db";
 import { FALLBACK_CERTIFICATIONS } from "../../utils/certificationsData";
@@ -8,6 +8,7 @@ import SocialMetaTags from "../../components/SocialMetaTags/SocialMetaTags";
 import StructuredData from "../../components/StructuredData/StructuredData";
 import { getPersonSchema } from "../../utils/structuredData";
 import ContactForm from "../../components/ContactForm/ContactForm";
+import InteractiveAvatar from "../../components/InteractiveAvatar/InteractiveAvatar";
 import {
   convertToCloudinaryBlurURL,
   cleanUpCloudinaryURL,
@@ -208,6 +209,20 @@ export default function About({ certifications = [], aboutData = null }) {
       : FALLBACK_INFLUENCES;
   return (
     <div className={styles.container}>
+      <Head>
+        <link
+          rel="preload"
+          as="image"
+          href="/images/about_face_spritesheet.webp"
+          type="image/webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/images/about_face_blinking_spritesheet.webp"
+          type="image/webp"
+        />
+      </Head>
       <SocialMetaTags
         name="About Christian Marques"
         description="Background, technical expertise, engineering history, and credentials of Christian Marques — software engineer and creative technologist."
@@ -220,18 +235,11 @@ export default function About({ certifications = [], aboutData = null }) {
       <article className={styles.wrapper}>
         {/* Header / Bio Card */}
         <header className={styles.profileHeader}>
-          <div className={styles.avatarWrapper}>
-            <Image
-              placeholder="blur"
-              blurDataURL={convertToCloudinaryBlurURL(COVER_IMAGE_URL)}
-              alt="Christian Marques portrait"
-              className={styles.coverImage}
-              width={170}
-              height={170}
-              src={cleanUpCloudinaryURL(COVER_IMAGE_URL)}
-              priority
-            />
-          </div>
+          <InteractiveAvatar
+            staticSrc={cleanUpCloudinaryURL(COVER_IMAGE_URL)}
+            staticBlurUrl={convertToCloudinaryBlurURL(COVER_IMAGE_URL)}
+            alt="Christian Marques portrait"
+          />
 
           <div className={styles.headerText}>
             <div
