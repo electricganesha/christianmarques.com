@@ -247,6 +247,13 @@ const WebGLSnippet = ({ onInteraction }) => {
         error={soundError}
         onToggle={toggleSound}
       />
+      {ready &&
+        createPortal(
+          <div className={styles.touchSurface} data-ganesha-touch>
+            <span>Drag to interact · swipe below to scroll</span>
+          </div>,
+          document.body
+        )}
       {debug && (
         <GaneshaDebug
           config={configRef.current}

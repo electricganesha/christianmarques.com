@@ -33,3 +33,23 @@ assert.strictEqual(material.depthWrite, false, "material depthWrite must be fals
 assert.strictEqual(material.depthTest, false, "material depthTest must be false");
 
 console.log("✓ TSL MeshBasicNodeMaterial created cleanly with valid vertexNode and opacityNode graph!");
+
+// 3. Test SCSS View Transition selectors for cards mode
+import fs from "fs";
+import sass from "sass";
+const scssContent = fs.readFileSync("styles/globals.scss", "utf8");
+const compiledCss = sass.renderSync({ data: scssContent }).css.toString();
+
+// Verify no invalid descendant spaces before ::view-transition in transition-mode rules
+const invalidSpaceRegex = /html\[data-transition-mode=[^\]]+\]\s+::view-transition/;
+assert(!invalidSpaceRegex.test(compiledCss), "SCSS must not emit descendant space between html[data-transition-mode] and ::view-transition");
+
+// Verify essential selectors exist without spaces
+assert(compiledCss.includes("html[data-transition-mode=cards]::view-transition-group(root)"), "Must contain root group override");
+assert(compiledCss.includes("html[data-transition-mode=cards]::view-transition-old(root)"), "Must contain root old override");
+assert(compiledCss.includes("html[data-transition-mode=cards]::view-transition-new(root)"), "Must contain root new override");
+assert(compiledCss.includes("html[data-transition-mode=cards]::view-transition-group(projects-cards)"), "Must contain projects-cards group rule");
+assert(compiledCss.includes("html[data-transition-mode=cards]::view-transition-old(projects-cards)"), "Must contain projects-cards old rule");
+assert(compiledCss.includes("html[data-transition-mode=cards]::view-transition-new(projects-cards)"), "Must contain projects-cards new rule");
+
+console.log("✓ SCSS view transition selectors for cards mode compiled cleanly without descendant spaces!");

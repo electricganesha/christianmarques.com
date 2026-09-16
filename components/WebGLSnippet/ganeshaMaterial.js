@@ -6,8 +6,12 @@ import {
   viewport,
   uv,
   attribute,
+  instanceIndex,
+  ceil,
+  floor,
   length,
   fwidth,
+  min,
   max,
   smoothstep,
   step,
@@ -98,6 +102,13 @@ export function createGaneshaMaterial(config, depthTexture) {
     uSurfaceSize: uniform(config.surfaceParticleSize),
     uFieldExtent: uniform(new THREE.Vector2()),
     uTotalCoverage: uniform(0),
+    uDepthAccentsEnabled: uniform(config.depthAccentsEnabled ? 1 : 0),
+    uDepthAccentStrength: uniform(config.depthAccentStrength ?? 0.65),
+    uTonalContrastEnabled: uniform(config.tonalContrastEnabled ? 1 : 0),
+    uTonalContrast: uniform(config.tonalContrast ?? 0.45),
+    uInteractionTrailsEnabled: uniform(config.interactionTrailsEnabled ? 1 : 0),
+    uInteractionTrailLength: uniform(config.interactionTrailLength ?? 0.75),
+    uAntialiasingEnabled: uniform(config.antialiasingEnabled ? 1 : 0),
   };
 
   const pos = attribute("aSurface", "vec3");
@@ -254,14 +265,46 @@ export function createGaneshaMaterial(config, depthTexture) {
     cavity = cavity.add(aboveTangent.mul(weight));
   }
 
-  let tone = clamp(
-    shade
-      .mul(uniforms.uShadowStrength)
-      .add(contour.mul(uniforms.uContourStrength))
-      .add(cavity.mul(0.125).mul(uniforms.uOcclusionStrength)),
-    0.0,
-    1.0
+  // Feature proximity detection (eyes, trunk, hands)
+  const eyeDist = min(
+    length(pos.sub(vec3(-0.13, 0.43, 0.38))),
+    length(pos.sub(vec3(0.13, 0.43, 0.38)))
   );
+  const eyeZone = exp(eyeDist.mul(eyeDist).mul(-45.0));
+
+  const trunkDistX = abs(pos.x);
+  const trunkZone = exp(trunkDistX.mul(trunkDistX).mul(-25.0))
+    .mul(smoothstep(-0.25, 0.45, pos.y))
+    .mul(smoothstep(0.1, 0.35, pos.z));
+
+  const handDist = min(
+    length(pos.sub(vec3(-0.62, -0.05, 0.32))),
+    length(pos.sub(vec3(0.62, -0.05, 0.32)))
+  );
+  const handZone = exp(handDist.mul(handDist).mul(-22.0));
+
+  const featureZone = eyeZone
+    .mul(1.6)
+    .add(trunkZone.mul(1.3))
+    .add(handZone.mul(1.2));
+
+  // Depth-aware ink accents: strengthen contours and creases around eyes, trunk, and hands
+  const creaseAccent = smoothstep(float(0.1), float(0.6), cavity.mul(0.15));
+  const contourAccent = smoothstep(float(0.25), float(0.8), contour);
+  const depthAccents = creaseAccent
+    .mul(1.5)
+    .add(contourAccent.mul(0.8))
+    .mul(float(1.0).add(featureZone.mul(1.4)))
+    .mul(uniforms.uDepthAccentStrength)
+    .mul(uniforms.uDepthAccentsEnabled);
+
+  let baseTone = shade
+    .mul(uniforms.uShadowStrength)
+    .add(contour.mul(uniforms.uContourStrength))
+    .add(cavity.mul(0.125).mul(uniforms.uOcclusionStrength));
+
+  baseTone = baseTone.add(depthAccents.mul(0.32));
+  let tone = clamp(baseTone, 0.0, 1.0);
 
   const textureTone = clamp(
     aTextureInk.sub(0.5).mul(uniforms.uTextureInkContrast).add(0.5),
@@ -274,12 +317,27 @@ export function createGaneshaMaterial(config, depthTexture) {
     step(float(0.0), aTextureInk)
   );
 
+  // Gentle tonal contrast: deepen faint particles without crushing dense regions into solid black
+  const liftedToe = pow(tone, float(0.72));
+  const softShoulder = float(1.0).sub(pow(float(1.0).sub(tone), float(1.2)));
+  const gentleToneCurve = mix(liftedToe, softShoulder, tone);
+  tone = mix(
+    tone,
+    gentleToneCurve,
+    uniforms.uTonalContrast.mul(uniforms.uTonalContrastEnabled)
+  );
+
   // 6. Point size calculation
   const density = mix(
     smoothstep(0.72, 0.98, activeTopology),
     mix(float(0.5), float(1.0), reveal),
     core
   );
+  const faintBoost = smoothstep(float(0.1), float(0.6), density)
+    .mul(float(0.18))
+    .mul(uniforms.uTonalContrast)
+    .mul(uniforms.uTonalContrastEnabled);
+  const contrastDensity = clamp(density.add(faintBoost), 0.0, 1.0);
   const breathing = float(0.7).add(
     sin(aSeed.mul(91.0).add(uniforms.time.mul(0.6)))
       .mul(0.3)
@@ -342,7 +400,11 @@ export function createGaneshaMaterial(config, depthTexture) {
     )
   );
 
-  let finalOpacity = mix(fieldCircle.mul(0.92), density.mul(visible), activeTopology);
+  let finalOpacity = mix(
+    fieldCircle.mul(0.92),
+    contrastDensity.mul(visible),
+    activeTopology
+  );
 
   const screenUV = clipPosition.xy.div(clipPosition.w).mul(0.5).add(0.5);
   const fieldDepth = readLinearDepth(depthTexNode.sample(screenUV.flipY()));
@@ -358,27 +420,62 @@ export function createGaneshaMaterial(config, depthTexture) {
     )
   );
 
+  // 8. Motion vector calculation for brief interaction trails
+  const motionDelta = flightSwirl.add(fieldAttract).add(surface.sub(pos));
+  const motionView = mat3(cameraViewMatrix).mul(motionDelta);
+  const motionSpeed = length(motionDelta);
+  const motionDir = normalize(motionView.xy.add(vec2(0.0001, 0.0001)));
+
+  const interactionActivity = max(
+    uniforms.uActivity,
+    max(fieldHover, max(music.x, trace))
+  );
+  const trailScale = clamp(motionSpeed.mul(30.0), 0.0, 1.0)
+    .mul(interactionActivity)
+    .mul(uniforms.uInteractionTrailLength)
+    .mul(uniforms.uInteractionTrailsEnabled);
+
+  // instanceIndex is a GPU builtin, not an additional vertex buffer.
+  const loadViewport = viewport.zw.div(uniforms.uDpr);
+  const loadColumns = ceil(loadViewport.x.div(32));
+  const loadRows = ceil(loadViewport.y.div(32));
+  const loadIndex = float(instanceIndex);
+  const loadGrid = vec3(
+    loadIndex.mod(loadColumns).mul(32).add(1).div(loadViewport.x).mul(2).sub(1),
+    float(1).sub(
+      floor(loadIndex.div(loadColumns))
+        .mul(32)
+        .add(1)
+        .div(loadViewport.y)
+        .mul(2)
+    ),
+    float(1).sub(step(loadColumns.mul(loadRows), loadIndex))
+  );
+  // Leave time for the matching CSS grid to hand off before it starts moving.
+  const arrival = smoothstep(0.35, 1.0, uniforms.uLoad);
+  const loadSize = mix(uniforms.uDpr.mul(3), finalSize, arrival);
+  const loadCenter = mix(
+    vec4(loadGrid.xy, 0, 1),
+    clipPosition.div(clipPosition.w),
+    arrival
+  );
+  const quadDelta = positionLocal.xy.sub(arrival.mul(0.5));
+
   const material = new MeshBasicNodeMaterial({
     transparent: true,
     depthWrite: false,
     depthTest: false,
   });
 
-  // Camera-facing instanced quads: WebGPU has no programmable point size.
-  material.vertexNode = clipPosition.add(
-    vec4(
-      positionLocal.xy
-        .sub(0.5)
-        .mul(finalSize)
-        .mul(2.0)
-        .div(viewport.zw)
-        .mul(clipPosition.w),
-      0.0,
-      0.0
-    )
+  // Camera-facing instanced quads - undistorted circular particles
+  material.vertexNode = loadCenter.add(
+    vec4(quadDelta.mul(loadSize).mul(2).div(viewport.zw), 0, 0)
   );
 
-  const vOpacity = varying(finalOpacity, "vOpacity");
+  const vOpacity = varying(
+    mix(loadGrid.z.mul(0.12), finalOpacity, arrival),
+    "vOpacity"
+  );
 
   // Antialiased circular disc rasterization
   const radius = length(uv().sub(vec2(0.5)));
@@ -386,23 +483,116 @@ export function createGaneshaMaterial(config, depthTexture) {
   const discAlpha = float(1.0).sub(
     smoothstep(float(0.5).sub(edge), float(0.5), radius)
   );
-  const finalAlpha = discAlpha.mul(vOpacity);
 
-  material.alphaTest = 0.01;
+  // Antialiasing: continuous subpixel filtering and energy preservation to eliminate edge shimmer during motion
+  const aaWidth = max(fwidth(radius).mul(1.4), float(0.025));
+  const smoothDisc = float(1.0).sub(
+    smoothstep(
+      float(0.5).sub(aaWidth),
+      float(0.5).add(aaWidth.mul(0.35)),
+      radius
+    )
+  );
+  const subpixelFade = clamp(loadSize.div(float(1.8)), float(0.25), float(1.0));
+  const antialiasedDisc = smoothDisc.mul(subpixelFade);
+
+  const effectiveDisc = mix(
+    discAlpha,
+    antialiasedDisc,
+    uniforms.uAntialiasingEnabled
+  );
+
+  const finalAlpha = effectiveDisc.mul(vOpacity);
+
+  material.alphaTest = 0.002;
   material.colorNode = vec3(0.0);
   material.opacityNode = finalAlpha;
+
+  // Secondary trail particle system (soft circular ghost blur echoes, without distorting particles)
+  const trailMat1 = new MeshBasicNodeMaterial({
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+  });
+  const trailOffset1 = motionDir
+    .negate()
+    .mul(
+      clamp(motionSpeed.mul(35.0), 0.0, 1.5)
+        .mul(interactionActivity)
+        .mul(uniforms.uInteractionTrailLength)
+        .mul(finalSize)
+        .mul(1.4)
+    );
+  trailMat1.vertexNode = clipPosition.add(
+    vec4(
+      quadDelta
+        .mul(finalSize.mul(0.85))
+        .add(trailOffset1)
+        .mul(2.0)
+        .div(viewport.zw)
+        .mul(clipPosition.w),
+      0.0,
+      0.0
+    )
+  );
+  const trailRadius = length(uv().sub(vec2(0.5)));
+  const trailSoftDisc1 = float(1.0).sub(
+    smoothstep(float(0.15), float(0.5), trailRadius)
+  );
+  trailMat1.alphaTest = 0.001;
+  trailMat1.colorNode = vec3(0.0);
+  trailMat1.opacityNode = trailSoftDisc1
+    .mul(vOpacity)
+    .mul(0.32)
+    .mul(trailScale);
+
+  const trailMat2 = new MeshBasicNodeMaterial({
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+  });
+  const trailOffset2 = motionDir
+    .negate()
+    .mul(
+      clamp(motionSpeed.mul(35.0), 0.0, 1.5)
+        .mul(interactionActivity)
+        .mul(uniforms.uInteractionTrailLength)
+        .mul(finalSize)
+        .mul(2.8)
+    );
+  trailMat2.vertexNode = clipPosition.add(
+    vec4(
+      quadDelta
+        .mul(finalSize.mul(0.7))
+        .add(trailOffset2)
+        .mul(2.0)
+        .div(viewport.zw)
+        .mul(clipPosition.w),
+      0.0,
+      0.0
+    )
+  );
+  const trailSoftDisc2 = float(1.0).sub(
+    smoothstep(float(0.08), float(0.5), trailRadius)
+  );
+  trailMat2.alphaTest = 0.001;
+  trailMat2.colorNode = vec3(0.0);
+  trailMat2.opacityNode = trailSoftDisc2
+    .mul(vOpacity)
+    .mul(0.16)
+    .mul(trailScale);
 
   uniforms.uSurfaceDepth = depthTexNode;
 
   // UniformArrayNode owns a padded GPU buffer in .value; the loop edits .array.
   const bindings = { ...uniforms };
-  for (const key of [
-    "uNotePulse",
-    "uNoteStrength",
-    "uMusicPath",
-    "uTrail",
-  ]) {
+  for (const key of ["uNotePulse", "uNoteStrength", "uMusicPath", "uTrail"]) {
     bindings[key] = { value: uniforms[key].array };
   }
-  return { material, uniforms: bindings };
+  return {
+    material,
+    trailMaterials: [trailMat1, trailMat2],
+    uniforms: bindings,
+    viewDepth: varying(viewPosition.z.negate(), "particleViewDepth"),
+  };
 }

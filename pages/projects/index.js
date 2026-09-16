@@ -13,6 +13,8 @@ import {
   sortProjectsByDateDesc,
 } from "../../utils/projectsData";
 import db from "../../utils/db";
+import ReactDOM from "react-dom";
+import { startWebGLTransition } from "../../components/PageTransition/WebGLTransition";
 
 export default function Projects(props) {
   const router = useRouter();
@@ -30,6 +32,35 @@ export default function Projects(props) {
       .filter((p) => matchesCategory(p, activeCategory))
       .sort(sortProjectsByDateDesc);
   }, [rawProjects, activeCategory]);
+
+  const handleCategoryChange = (catId) => {
+    if (catId === activeCategory) return;
+    startWebGLTransition(
+      () => {
+        ReactDOM.flushSync(() => {
+          setActiveCategory(catId);
+        });
+      },
+      {
+        mode: "cards",
+        scopeSelector: "[data-projects-cards]",
+      }
+    );
+  };
+
+  const handleShowAllSections = () => {
+    startWebGLTransition(
+      () => {
+        ReactDOM.flushSync(() => {
+          setShowAllSections(true);
+        });
+      },
+      {
+        mode: "cards",
+        scopeSelector: "[data-projects-cards]",
+      }
+    );
+  };
 
   if (router.isFallback) {
     return <Loader />;
@@ -64,7 +95,7 @@ export default function Projects(props) {
             className={`${styles.filterBtn} ${
               activeCategory === cat.id ? styles.filterBtnActive : ""
             }`}
-            onClick={() => setActiveCategory(cat.id)}
+            onClick={() => handleCategoryChange(cat.id)}
             aria-pressed={activeCategory === cat.id}
           >
             {cat.label}
@@ -72,120 +103,94 @@ export default function Projects(props) {
         ))}
       </nav>
 
-      {activeCategory === "all" ? (
-        <>
-          {/* 1. Featured Work */}
-          <section
-            className={styles.section}
-            aria-labelledby="heading-featured"
-          >
-            <div className={styles.sectionHeader}>
-              <h2 id="heading-featured" className={styles.sectionTitle}>
-                Featured Work
-              </h2>
-              <p className={styles.sectionSubtitle}>
-                Some of my favourite and most recent systems, tools, and case
-                studies.
-              </p>
-            </div>
-            <div className={styles.grid}>
-              {curated.featured.map((project, index) => (
-                <ProjectCardSmall
-                  key={project.id || project.slug}
-                  project={project}
-                  index={index}
-                  category="projects"
-                />
-              ))}
-            </div>
-          </section>
+      <div data-projects-cards>
+        {activeCategory === "all" ? (
+          <>
+            {/* 1. Featured Work */}
+            <section
+              className={styles.section}
+              aria-labelledby="heading-featured"
+            >
+              <div className={styles.sectionHeader}>
+                <h2 id="heading-featured" className={styles.sectionTitle}>
+                  Featured Work
+                </h2>
+                <p className={styles.sectionSubtitle}>
+                  Some of my favourite and most recent systems, tools, and case
+                  studies.
+                </p>
+              </div>
+              <div className={styles.grid}>
+                {curated.featured.map((project, index) => (
+                  <ProjectCardSmall
+                    key={project.id || project.slug}
+                    project={project}
+                    index={index}
+                    category="projects"
+                  />
+                ))}
+              </div>
+            </section>
 
-          {/* 2. Professional Experience */}
-          <section
-            className={styles.section}
-            aria-labelledby="heading-professional"
-          >
-            <div className={styles.sectionHeader}>
-              <h2 id="heading-professional" className={styles.sectionTitle}>
-                Professional Experience
-              </h2>
-              <p className={styles.sectionSubtitle}>
-                A selection of my jobs, client projects, and organisational
-                roles.
-              </p>
-            </div>
-            <div className={styles.grid}>
-              {curated.professional.map((project, index) => (
-                <ProjectCardSmall
-                  key={project.id || project.slug}
-                  project={project}
-                  index={index}
-                  category="projects"
-                />
-              ))}
-            </div>
-          </section>
+            {/* 2. Professional Experience */}
+            <section
+              className={styles.section}
+              aria-labelledby="heading-professional"
+            >
+              <div className={styles.sectionHeader}>
+                <h2 id="heading-professional" className={styles.sectionTitle}>
+                  Professional Experience
+                </h2>
+                <p className={styles.sectionSubtitle}>
+                  A selection of my jobs, client projects, and organisational
+                  roles.
+                </p>
+              </div>
+              <div className={styles.grid}>
+                {curated.professional.map((project, index) => (
+                  <ProjectCardSmall
+                    key={project.id || project.slug}
+                    project={project}
+                    index={index}
+                    category="projects"
+                  />
+                ))}
+              </div>
+            </section>
 
-          {!showAllSections ? (
-            <div className={styles.loadMoreContainer}>
-              <button
-                type="button"
-                className={styles.loadMoreButton}
-                onClick={() => setShowAllSections(true)}
-                aria-label="Load remaining experiments and archive projects"
-              >
-                <span>
-                  Explore Experiments & Archive (
-                  {curated.experiments.length + curated.archive.length} more)
-                </span>
-                <ChevronDown size={18} />
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* 3. Experiments & Personal Projects */}
-              <section
-                className={styles.section}
-                aria-labelledby="heading-experiments"
-              >
-                <div className={styles.sectionHeader}>
-                  <h2 id="heading-experiments" className={styles.sectionTitle}>
-                    Experiments & Personal Projects
-                  </h2>
-                  <p className={styles.sectionSubtitle}>
-                    Algorithmic toys, creative prototypes, games, and community
-                    tools
-                  </p>
-                </div>
-                <div className={styles.grid}>
-                  {curated.experiments.map((project, index) => (
-                    <ProjectCardSmall
-                      key={project.id || project.slug}
-                      project={project}
-                      index={index}
-                      category="projects"
-                    />
-                  ))}
-                </div>
-              </section>
-
-              {/* 4. Archive */}
-              {curated.archive.length > 0 && (
+            {!showAllSections ? (
+              <div className={styles.loadMoreContainer}>
+                <button
+                  type="button"
+                  className={styles.loadMoreButton}
+                  onClick={handleShowAllSections}
+                  aria-label="Load remaining experiments and archive projects"
+                >
+                  <span>
+                    Explore Experiments & Archive (
+                    {curated.experiments.length + curated.archive.length} more)
+                  </span>
+                  <ChevronDown size={18} />
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* 3. Experiments & Personal Projects */}
                 <section
                   className={styles.section}
-                  aria-labelledby="heading-archive"
+                  aria-labelledby="heading-experiments"
                 >
                   <div className={styles.sectionHeader}>
-                    <h2 id="heading-archive" className={styles.sectionTitle}>
-                      Archive
+                    <h2 id="heading-experiments" className={styles.sectionTitle}>
+                      Experiments & Personal Projects
                     </h2>
                     <p className={styles.sectionSubtitle}>
-                      Earlier projects and historical work
+                      Algorithmic toys, creative prototypes, games, and community
+                      tools
                     </p>
                   </div>
-
                   <div className={styles.grid}>
-                    {curated.archive.map((project, index) => (
+                    {curated.experiments.map((project, index) => (
                       <ProjectCardSmall
                         key={project.id || project.slug}
                         project={project}
@@ -195,30 +200,58 @@ export default function Projects(props) {
                     ))}
                   </div>
                 </section>
-              )}
-            </>
-          )}
-        </>
-      ) : (
-        <section className={styles.section} aria-label="Filtered Projects">
-          {filteredProjects.length > 0 ? (
-            <div className={styles.grid}>
-              {filteredProjects.map((project, index) => (
-                <ProjectCardSmall
-                  key={project.id || project.slug}
-                  project={project}
-                  index={index}
-                  category="projects"
-                />
-              ))}
-            </div>
-          ) : (
-            <div className={styles.emptyState}>
-              <p>No projects found in this category.</p>
-            </div>
-          )}
-        </section>
-      )}
+
+                {/* 4. Archive */}
+                {curated.archive.length > 0 && (
+                  <section
+                    className={styles.section}
+                    aria-labelledby="heading-archive"
+                  >
+                    <div className={styles.sectionHeader}>
+                      <h2 id="heading-archive" className={styles.sectionTitle}>
+                        Archive
+                      </h2>
+                      <p className={styles.sectionSubtitle}>
+                        Earlier projects and historical work
+                      </p>
+                    </div>
+
+                    <div className={styles.grid}>
+                      {curated.archive.map((project, index) => (
+                        <ProjectCardSmall
+                          key={project.id || project.slug}
+                          project={project}
+                          index={index}
+                          category="projects"
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </>
+            )}
+          </>
+        ) : (
+          <section className={styles.section} aria-label="Filtered Projects">
+            {filteredProjects.length > 0 ? (
+              <div className={styles.grid}>
+                {filteredProjects.map((project, index) => (
+                  <ProjectCardSmall
+                    key={project.id || project.slug}
+                    project={project}
+                    index={index}
+                    category="projects"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className={styles.emptyState}>
+                <p>No projects found in this category.</p>
+              </div>
+            )}
+          </section>
+        )}
+      </div>
     </div>
   );
 }

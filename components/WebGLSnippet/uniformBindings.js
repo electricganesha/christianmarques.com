@@ -21,6 +21,13 @@ export const UNIFORM_BINDINGS = {
   pointerRevealStrength: "uPointerReveal",
   fieldParticleSize: "uFieldSize",
   surfaceParticleSize: "uSurfaceSize",
+  depthAccentsEnabled: "uDepthAccentsEnabled",
+  depthAccentStrength: "uDepthAccentStrength",
+  tonalContrastEnabled: "uTonalContrastEnabled",
+  tonalContrast: "uTonalContrast",
+  interactionTrailsEnabled: "uInteractionTrailsEnabled",
+  interactionTrailLength: "uInteractionTrailLength",
+  antialiasingEnabled: "uAntialiasingEnabled",
 };
 
 export const REBUILD_KEYS = [
@@ -55,6 +62,8 @@ export function applyConfigPatch(config, patchKeys, uniforms, onResize) {
     if (!uniform) return;
     if (Array.isArray(config[key])) {
       uniform.value.fromArray(config[key]);
+    } else if (typeof config[key] === "boolean") {
+      uniform.value = config[key] ? 1 : 0;
     } else {
       uniform.value = config[key];
     }

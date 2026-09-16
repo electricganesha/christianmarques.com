@@ -1,6 +1,7 @@
 import * as THREE from "three/webgpu";
 import { positionView, cameraNear, cameraFar, vec4 } from "three/tsl";
 import { loadSurface, sampleParticles } from "./sampleGanesha";
+import { GaneshaDof } from "./ganeshaDof";
 import { createGaneshaMaterial } from "./ganeshaMaterial";
 
 /**
@@ -69,7 +70,7 @@ export class GaneshaScene {
       positionView.z.negate().sub(cameraNear).div(cameraFar.sub(cameraNear)),
       0,
       0,
-      1,
+      1
     );
 
     this.hitSurface = new THREE.Mesh(this.surface, this.hitMaterial);
@@ -77,14 +78,27 @@ export class GaneshaScene {
 
     const ganeshaMat = createGaneshaMaterial(
       this.config,
-      this.depthTarget.texture,
+      this.depthTarget.texture
     );
     this.material = ganeshaMat.material;
     this.uniforms = ganeshaMat.uniforms;
+    this.dof = new GaneshaDof(
+      this.renderer,
+      this.material,
+      ganeshaMat.viewDepth
+    );
 
     this.particles = new THREE.Mesh(new THREE.BufferGeometry(), this.material);
     this.particles.frustumCulled = false;
     this.scene.add(this.particles);
+
+    this.trailMeshes = (ganeshaMat.trailMaterials || []).map((trailMat) => {
+      const mesh = new THREE.Mesh(new THREE.BufferGeometry(), trailMat);
+      mesh.frustumCulled = false;
+      this.scene.add(mesh);
+      return mesh;
+    });
+    this.scene.trailMeshes = this.trailMeshes;
 
     this.resize();
 
@@ -106,7 +120,7 @@ export class GaneshaScene {
         this.mobile
           ? this.config.particleCountMobile
           : this.config.particleCountDesktop,
-        this.config,
+        this.config
       );
 
       const quad = new THREE.PlaneGeometry(1, 1);
@@ -124,7 +138,7 @@ export class GaneshaScene {
             : name;
         newGeometry.setAttribute(
           target,
-          new THREE.InstancedBufferAttribute(attr.array, attr.itemSize),
+          new THREE.InstancedBufferAttribute(attr.array, attr.itemSize)
         );
       }
 
@@ -132,8 +146,8 @@ export class GaneshaScene {
         "aActivation",
         new THREE.InstancedBufferAttribute(
           new Float32Array(samples.attributes.position.count),
-          1,
-        ),
+          1
+        )
       );
 
       newGeometry.instanceCount = samples.attributes.position.count;
@@ -142,6 +156,11 @@ export class GaneshaScene {
 
       this.particles.geometry?.dispose();
       this.particles.geometry = newGeometry;
+      if (this.trailMeshes) {
+        for (const mesh of this.trailMeshes) {
+          mesh.geometry = newGeometry;
+        }
+      }
       this.geometry = newGeometry;
     }
 
@@ -172,7 +191,7 @@ export class GaneshaScene {
 
     uniforms.uDpr.value = Math.min(
       window.devicePixelRatio || 1,
-      this.mobile ? config.mobileMaxDpr : config.maxDpr,
+      this.mobile ? config.mobileMaxDpr : config.maxDpr
     );
 
     renderer.setPixelRatio(uniforms.uDpr.value);
@@ -180,11 +199,16 @@ export class GaneshaScene {
 
     depthTarget.setSize(
       Math.round(width * uniforms.uDpr.value),
-      Math.round(height * uniforms.uDpr.value),
+      Math.round(height * uniforms.uDpr.value)
+    );
+
+    this.dof?.resize(
+      Math.round(width * uniforms.uDpr.value),
+      Math.round(height * uniforms.uDpr.value)
     );
 
     particles.scale.setScalar(
-      config.scale * (this.mobile ? config.mobileScale : 1),
+      config.scale * (this.mobile ? config.mobileScale : 1)
     );
     particles.position.set(config.xOffset, config.yOffset, config.depth);
     hitSurface.scale.copy(particles.scale);
@@ -227,7 +251,7 @@ export class GaneshaScene {
         position: new THREE.Vector3(
           fields.getX(i) * this.uniforms.uFieldExtent.value.x,
           fields.getY(i) * this.uniforms.uFieldExtent.value.y,
-          fields.getZ(i) * 0.8,
+          fields.getZ(i) * 0.8
         ),
         normalized: [
           fields.getX(i) * 0.5 + 0.5,
@@ -248,7 +272,23 @@ export class GaneshaScene {
     this.renderer.setRenderTarget(this.depthTarget);
     this.renderer.render(this.depthScene, this.camera);
     this.renderer.setRenderTarget(null);
-    this.renderer.render(this.scene, this.camera);
+
+    const trailsActive = Boolean(this.config.interactionTrailsEnabled);
+    if (this.trailMeshes) {
+      for (const mesh of this.trailMeshes) {
+        mesh.visible = trailsActive;
+      }
+    }
+
+    if (
+      this.config.dofEnabled &&
+      this.config.dofAperture > 0 &&
+      this.config.dofMaxBlur > 0
+    ) {
+      this.dof.render(this.scene, this.camera, this.config, this.mobile);
+    } else {
+      this.renderer.render(this.scene, this.camera);
+    }
   }
 
   createSnapshot(extraState = {}) {
@@ -277,7 +317,7 @@ export class GaneshaScene {
       uniforms: Object.fromEntries(
         Object.entries(this.uniforms)
           .filter(([, u]) => typeof u.value === "number")
-          .map(([key, u]) => [key, u.value]),
+          .map(([key, u]) => [key, u.value])
       ),
     };
   }
@@ -287,8 +327,14 @@ export class GaneshaScene {
     this.geometry?.dispose();
     this.surface?.dispose();
     this.material?.dispose();
+    if (this.trailMeshes) {
+      for (const mesh of this.trailMeshes) {
+        mesh.material?.dispose();
+      }
+    }
     this.hitMaterial?.dispose();
     this.depthTarget?.dispose();
+    this.dof?.dispose();
     this.renderer?.dispose();
     this.renderer?.domElement?.remove();
   }

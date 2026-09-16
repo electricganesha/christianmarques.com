@@ -5,7 +5,7 @@
  * particles across their bounding rectangles in WebGL clipspace coordinates [-1, 1].
  */
 
-export function samplePageLayout(particleCount = 4200) {
+export function samplePageLayout(particleCount = 4200, scopeSelector = null) {
   if (typeof window === "undefined" || typeof document === "undefined") {
     return createFallbackDistribution(particleCount);
   }
@@ -13,9 +13,21 @@ export function samplePageLayout(particleCount = 4200) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
+  let root = document;
+  if (scopeSelector) {
+    const el =
+      typeof scopeSelector === "string"
+        ? document.querySelector(scopeSelector)
+        : scopeSelector;
+    if (el) root = el;
+  }
+
   // Query visible content elements in main layout and headers
-  const selectors = "h1, h2, h3, h4, p, a, button, img, blockquote, figure, [role='article'], .card, ul, ol";
-  const elements = Array.from(document.querySelectorAll(selectors));
+  const selectors = "h1, h2, h3, h4, p, a, button, img, article, section, blockquote, figure, [role='article'], .card, ul, ol";
+  const elements = Array.from(root.querySelectorAll(selectors));
+  if (root !== document && root.matches?.(selectors)) {
+    elements.push(root);
+  }
 
   const validRects = [];
   let totalArea = 0;

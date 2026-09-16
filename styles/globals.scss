@@ -148,35 +148,74 @@ h6 {
 }
 
 // Native browser captures preserve the exact fonts, images and compositing.
-@property --electric-aperture {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: 100%;
-}
 ::view-transition { pointer-events: none; background: white; }
-::view-transition-group(root) { animation-duration: 1200ms; }
+// Avoid interpolating full-document capture dimensions during navigation.
+::view-transition-group(root) { animation: none; }
 ::view-transition-old(root),
 ::view-transition-new(root) {
   mix-blend-mode: normal;
-  mask-image: radial-gradient(circle, black var(--electric-aperture), transparent calc(var(--electric-aperture) + 1%));
-  mask-size: 12px 12px;
   animation-duration: 1200ms;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
 }
 ::view-transition-old(root) { animation-name: electric-page-out; }
 ::view-transition-new(root) { animation-name: electric-page-in; }
-::view-transition-group(electric-particles) { z-index: 1; animation: none; }
+::view-transition-group(electric-particles) { z-index: 100; animation: none; }
 ::view-transition-old(electric-particles) { display: none; }
 ::view-transition-new(electric-particles) { animation: none; mix-blend-mode: normal; }
 @keyframes electric-page-out {
-  0% { --electric-aperture: 100%; opacity: 1; }
-  48%, 100% { --electric-aperture: 0%; opacity: 0; }
+  0% { opacity: 1; }
+  45%, 100% { opacity: 0; }
 }
 @keyframes electric-page-in {
-  0%, 40% { --electric-aperture: 0%; opacity: 0; }
-  100% { --electric-aperture: 100%; opacity: 1; }
+  0%, 25% { opacity: 0; }
+  100% { opacity: 1; }
 }
+
+// When transitioning subcategories/cards only, keep the root layout (nav, page header, filter buttons) static.
+// Native card captures overlap gently while the particles bridge the change.
+html[data-transition-mode="cards"] {
+  [data-projects-cards] {
+    view-transition-name: projects-cards;
+  }
+  &::view-transition-group(root) { animation: none !important; }
+  &::view-transition-old(root) {
+    display: none !important;
+    animation: none !important;
+  }
+  &::view-transition-new(root) {
+    animation: none !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    mix-blend-mode: normal !important;
+    opacity: 1 !important;
+  }
+  &::view-transition-group(projects-cards) {
+    animation-duration: 650ms;
+    overflow: clip;
+  }
+  // Fade the outgoing browser capture without changing its image rendering.
+  &::view-transition-old(projects-cards) {
+    animation: cards-vanish-out 650ms ease-in-out both;
+    mix-blend-mode: normal;
+  }
+  // Incoming cards emerge while the particle bridge is still moving.
+  &::view-transition-new(projects-cards) {
+    animation: cards-vanish-in 650ms ease-in-out both;
+    mix-blend-mode: normal;
+  }
+}
+// Preserve the outgoing cards at the handoff, then fade smoothly.
+@keyframes cards-vanish-out {
+  0% { opacity: 1; }
+  55%, 100% { opacity: 0; }
+}
+// Overlap the reveal with the outgoing fade; no blank waiting phase.
+@keyframes cards-vanish-in {
+  0%, 20% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }

@@ -4,6 +4,21 @@ import { GANESHA_CONFIG } from "./ganeshaConfig";
 import styles from "./GaneshaDebug.module.scss";
 
 const GROUPS = {
+  "Depth of field": [
+    "dofEnabled",
+    "dofFocusOffset",
+    "dofAperture",
+    "dofMaxBlur",
+  ],
+  "Visual effects": [
+    "depthAccentsEnabled",
+    "depthAccentStrength",
+    "tonalContrastEnabled",
+    "tonalContrast",
+    "interactionTrailsEnabled",
+    "interactionTrailLength",
+    "antialiasingEnabled",
+  ],
   Composition: [
     "scale",
     "mobileScale",
@@ -70,6 +85,17 @@ const GROUPS = {
     "raycastInterval",
   ],
 };
+const LABELS = {
+  dofEnabled: "Enable Depth of Field",
+  depthAccentsEnabled: "Enable Depth-aware ink accents",
+  depthAccentStrength: "Ink accent strength",
+  tonalContrastEnabled: "Enable Gentle tonal contrast",
+  tonalContrast: "Tonal contrast strength",
+  interactionTrailsEnabled: "Enable Interaction trails",
+  interactionTrailLength: "Trail length",
+  antialiasingEnabled: "Enable Antialiasing (smooth circles)",
+};
+
 export const REBUILD_KEYS = [
   "particleCountDesktop",
   "particleCountMobile",
@@ -77,6 +103,11 @@ export const REBUILD_KEYS = [
   "faceSamplingWeight",
 ];
 const rangeFor = (key) => {
+  if (key === "dofAperture") return [0, 0.03, 0.001];
+  if (key === "dofMaxBlur") return [0, 0.015, 0.001];
+  if (key === "depthAccentStrength") return [0, 2, 0.05];
+  if (key === "tonalContrast") return [0, 1, 0.02];
+  if (key === "interactionTrailLength") return [0, 2, 0.05];
   if (key.startsWith("particleCount")) return [1000, 150000, 1000];
   if (key.startsWith("fieldCount")) return [0, 1500, 10];
   if (key.includes("SamplingWeight")) return [0.1, 10, 0.1];
@@ -105,6 +136,13 @@ export default function GaneshaDebug({ config, onChange, onPreview }) {
   const [collapsed, setCollapsed] = useState(false);
   const [status, setStatus] = useState("");
   const [exportText, setExportText] = useState("");
+
+  function changeBoolean(key, checked) {
+    setValues((old) => ({ ...old, [key]: checked }));
+    onChange({ [key]: checked });
+    setStatus("");
+  }
+
   function change(key, raw, index) {
     if (raw === "") return;
     const [min, max] = rangeFor(key);
@@ -193,25 +231,47 @@ export default function GaneshaDebug({ config, onChange, onPreview }) {
             </select>
           </label>
           {Object.entries(GROUPS).map(([group, keys]) => (
-            <details key={group} open={group === "Ink & shading"}>
+            <details
+              key={group}
+              open={["Ink & shading", "Visual effects", "Depth of field"].includes(group)}
+            >
               <summary>{group}</summary>
               {keys.map((key) => {
+                if (typeof values[key] === "boolean") {
+                  const id = `ganesha-debug-${key}`;
+                  const label = LABELS[key] || key;
+                  return (
+                    <div className={styles.controlCheckbox} key={id}>
+                      <label htmlFor={id}>
+                        <input
+                          id={id}
+                          type="checkbox"
+                          checked={Boolean(values[key])}
+                          onChange={(e) => changeBoolean(key, e.target.checked)}
+                        />
+                        <span>{label}</span>
+                      </label>
+                    </div>
+                  );
+                }
                 const [min, max, step] = rangeFor(key);
                 const components = Array.isArray(values[key])
                   ? values[key].map((_, i) => i)
                   : [undefined];
                 return components.map((index) => {
                   const label =
-                    key +
-                    (index === undefined
-                      ? ""
-                      : ` ${
-                          key === "inkDirection"
-                            ? "XYZ"[index]
-                            : index === 0
-                            ? "highlight"
-                            : "shadow"
-                        }`);
+                    (index === undefined && LABELS[key])
+                      ? LABELS[key]
+                      : key +
+                        (index === undefined
+                          ? ""
+                          : ` ${
+                              key === "inkDirection"
+                                ? "XYZ"[index]
+                                : index === 0
+                                ? "highlight"
+                                : "shadow"
+                            }`);
                   const value =
                     index === undefined ? values[key] : values[key][index];
                   const id = `ganesha-debug-${key}-${index ?? "scalar"}`;
