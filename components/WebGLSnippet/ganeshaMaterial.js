@@ -116,7 +116,7 @@ export function createGaneshaMaterial(config, depthTexture) {
   const aField = attribute("aField", "vec3");
   const aSeed = attribute("aSeed", "float");
   const aTextureInk = attribute("aTextureInk", "float");
-  const aActivation = attribute("aActivation", "float");
+  const fieldState = attribute("aFieldState", "vec4");
 
   const depthTexNode = texture(depthTexture);
   const fieldCircle = float(1.0).sub(step(uniforms.uFieldFraction, aSeed));
@@ -174,7 +174,7 @@ export function createGaneshaMaterial(config, depthTexture) {
   );
 
   // Field particles are awakened and driven directly by their individual hover activation
-  const activeTopology = mix(topology, aActivation, fieldCircle);
+  const activeTopology = mix(topology, fieldState.w, fieldCircle);
 
   // 4. Surface displacement
   const surface = computeDisplacement(pos, norm, uniforms, influence, music);
@@ -196,14 +196,24 @@ export function createGaneshaMaterial(config, depthTexture) {
     .negate()
     .mul(fieldHover)
     .mul(0.3)
+    // Once carried, use only the delayed trail target rather than also
+    // tugging toward the live cursor on every pass over the pickup location.
+    .mul(float(1).sub(smoothstep(0.015, 0.08, length(fieldState.xyz))))
     .mul(uniforms.uMotion)
     .mul(float(1.0).sub(activeTopology));
 
-  const finalPos = mix(
+  const restingPos = mix(
     field.add(fieldAttract),
     worldSurface,
     activeTopology
   ).add(flightSwirl);
+
+  // Stateful carry offsets belong only to the surrounding field particles.
+  const pointerFollow = fieldState.xyz
+    .mul(fieldCircle)
+    .mul(float(1).sub(activeTopology))
+    .mul(uniforms.uMotion);
+  const finalPos = restingPos.add(pointerFollow);
 
   // 5. Stipple, tone & cavity ambient occlusion
   const baseView = modelViewMatrix.mul(vec4(pos, 1.0));
@@ -421,7 +431,7 @@ export function createGaneshaMaterial(config, depthTexture) {
   );
 
   // 8. Motion vector calculation for brief interaction trails
-  const motionDelta = flightSwirl.add(fieldAttract).add(surface.sub(pos));
+  const motionDelta = flightSwirl.add(fieldAttract).add(surface.sub(pos)).add(pointerFollow);
   const motionView = mat3(cameraViewMatrix).mul(motionDelta);
   const motionSpeed = length(motionDelta);
   const motionDir = normalize(motionView.xy.add(vec2(0.0001, 0.0001)));

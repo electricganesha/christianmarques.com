@@ -36,6 +36,9 @@ export class SimulationLoop {
     this.hasAudioHit = false;
     this.normalized = new THREE.Vector3();
     this.fieldRayOffset = new THREE.Vector3();
+    this.pointerPath = [];
+    this.trailRay = new THREE.Ray();
+    this.trailTarget = new THREE.Vector3();
     this.fieldHit = null;
     this.fieldNoteCount = 0;
     this.totalCoverage = 0;
@@ -190,10 +193,37 @@ export class SimulationLoop {
       (1 - Math.exp(-dt * 10));
 
     // Per-particle hover activation and smooth transit to Ganesha
-    const attr = geometry?.attributes.aActivation;
-    const decay = 1 / config.releaseDuration;
+    const attr = geometry?.attributes.aFieldState;
     const stillTime = this.elapsed - interaction.lastPointerTime;
-    const shouldDecay = !interaction.pointerActive || stillTime > 0.3;
+    const moving = interaction.pointerActive && stillTime < 0.3;
+    if (moving && !reducedMotion) {
+      this.pointerPath.push({
+        time: this.elapsed,
+        origin: raycaster.ray.origin.clone(),
+        direction: raycaster.ray.direction.clone(),
+      });
+      while (this.pointerPath.length > 2 && this.pointerPath[1].time < this.elapsed - 0.9) {
+        this.pointerPath.shift();
+      }
+    } else {
+      this.pointerPath.length = 0;
+    }
+    // Use a fresh surface hit for depositing; stale hover hits must not catch particles.
+    const raycastDue = this.elapsed - this.lastRaycast >= config.raycastInterval;
+    if (raycastDue) {
+      this.lastRaycast = this.elapsed;
+      this.hasAudioHit = false;
+      if (interaction.pointerActive) {
+        this.hits.length = 0;
+        raycaster.intersectObject(hitSurface, false, this.hits);
+        if (this.hits.length) {
+          this.targetDepth = this.hits[0].point.z;
+          this.audioHit.copy(this.hits[0].point);
+          hitSurface.worldToLocal(this.audioHit);
+          this.hasAudioHit = true;
+        }
+      }
+    }
     const hoverRadiusSq = config.fieldHoverRadius ** 2;
     let totalProgress = 0;
     this.fieldHit = null;
@@ -220,35 +250,77 @@ export class SimulationLoop {
 
         if (reducedMotion) {
           point.progress = 1;
-          point.awakened = true;
-        } else if (isHovered) {
-          point.awakened = true;
-          // Responsive gather into the center upon hovering this specific particle
-          point.progress = Math.min(
-            1.0,
-            point.progress + dt * (2.5 + 2.0 * influence),
-          );
-        } else if (shouldDecay) {
-          // Symmetrically disperse back to field over releaseDuration
-          point.progress = Math.max(0.0, point.progress - dt * decay);
-          if (point.progress === 0) {
-            point.awakened = false;
+          point.carried = false;
+          point.carryOffset.set(0, 0, 0);
+        } else {
+          if (!point.deposited && !point.carried && moving && isHovered) {
+            point.carried = true;
+            point.pickedUpAt = this.elapsed;
           }
-        } else if (point.awakened) {
-          // While cursor is actively exploring, continue graceful flight into Ganesha
-          point.progress = Math.min(1.0, point.progress + dt * 1.8);
-        }
+          if (point.carried && moving && raycastDue && this.hasAudioHit) {
+            point.deposited = true;
+            point.carried = false;
+          }
+          if (!moving) point.carried = false;
 
+          if (point.deposited) {
+            // Keep deposits while exploring, then disperse on idle as before.
+            point.progress = moving
+              ? Math.min(1, point.progress + dt * 2.2)
+              : Math.max(0, point.progress - dt / config.releaseDuration);
+            if (!moving) {
+              point.carryOffset.multiplyScalar(Math.exp(-dt * 3));
+              if (point.progress === 0) point.deposited = false;
+            }
+          } else {
+            point.progress = 0;
+            this.trailTarget.set(0, 0, 0);
+            if (point.carried && this.pointerPath.length) {
+              // Stagger particles along the actual cursor path, including turns.
+              const spread = (point.id * 0.61803398875) % 1;
+              // Never pull a newly caught particle back to a pre-pickup cursor position.
+              const targetTime = Math.max(
+                point.pickedUpAt,
+                this.elapsed - (0.06 + spread * 0.45),
+              );
+              let before = this.pointerPath[0];
+              let after = before;
+              for (const sample of this.pointerPath) {
+                after = sample;
+                if (sample.time >= targetTime) break;
+                before = sample;
+              }
+              const blend = THREE.MathUtils.clamp(
+                (targetTime - before.time) / Math.max(0.0001, after.time - before.time),
+                0, 1,
+              );
+              this.trailRay.origin.copy(before.origin).lerp(after.origin, blend);
+              this.trailRay.direction.copy(before.direction).lerp(after.direction, blend).normalize();
+              this.trailRay.closestPointToPoint(point.position, this.trailTarget);
+              this.trailTarget.sub(point.position).multiplyScalar(0.97);
+            }
+            point.carryOffset.lerp(
+              this.trailTarget,
+              1 - Math.exp(-dt * (point.carried ? 7 : 3)),
+            );
+          }
+        }
         totalProgress += point.progress;
         if (attr) {
-          attr.array[point.id] = point.progress;
+          attr.setXYZW(
+            point.id,
+            point.carryOffset.x, point.carryOffset.y, point.carryOffset.z,
+            point.progress,
+          );
         }
 
         point.rendered
           .copy(point.position)
+          .addScaledVector(point.carryOffset, 1 - point.progress)
           .addScaledVector(
             this.fieldRayOffset,
-            -influence * uniforms.uFieldHover.value * 0.3 * uniforms.uMotion.value,
+            -influence * uniforms.uFieldHover.value * 0.3 * uniforms.uMotion.value *
+              (1 - THREE.MathUtils.smoothstep(point.carryOffset.length(), 0.015, 0.08)),
           );
 
         const distance = raycaster.ray.distanceSqToPoint(point.rendered);
@@ -271,21 +343,7 @@ export class SimulationLoop {
       uniforms.uTotalCoverage.value = this.totalCoverage;
     }
 
-    if (this.elapsed - this.lastRaycast >= config.raycastInterval) {
-      this.lastRaycast = this.elapsed;
-
-      this.hasAudioHit = false;
-      if (interaction.pointerActive) {
-        this.hits.length = 0;
-        raycaster.intersectObject(hitSurface, false, this.hits);
-        if (this.hits.length) {
-          this.targetDepth = this.hits[0].point.z;
-          this.audioHit.copy(this.hits[0].point);
-          hitSurface.worldToLocal(this.audioHit);
-          this.hasAudioHit = true;
-        }
-      }
-
+    if (raycastDue) {
       if (this.onInteractionRef.current) {
         this.normalized
           .copy(uniforms.uMousePos.value)

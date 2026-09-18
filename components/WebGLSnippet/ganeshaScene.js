@@ -142,12 +142,13 @@ export class GaneshaScene {
         );
       }
 
+      // One buffer for carry XYZ and activation W keeps WebGPU within its
+      // baseline limit of eight vertex buffers.
       newGeometry.setAttribute(
-        "aActivation",
+        "aFieldState",
         new THREE.InstancedBufferAttribute(
-          new Float32Array(samples.attributes.position.count),
-          1
-        )
+          new Float32Array(samples.attributes.position.count * 4), 4
+        ).setUsage(THREE.DynamicDrawUsage)
       );
 
       newGeometry.instanceCount = samples.attributes.position.count;
@@ -246,6 +247,9 @@ export class GaneshaScene {
         id: i,
         progress: 0,
         awakened: false,
+        carried: false,
+        deposited: false,
+        carryOffset: new THREE.Vector3(),
         field: [fields.getX(i), fields.getY(i), fields.getZ(i)],
         rendered: new THREE.Vector3(),
         position: new THREE.Vector3(
