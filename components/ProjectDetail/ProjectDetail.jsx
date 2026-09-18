@@ -67,8 +67,11 @@ const extractMediaEmbeds = (project) => {
   return Array.from(new Set(embeds));
 };
 
-const isVideoEmbed = (html) => {
-  return /youtube\.com|youtu\.be|vimeo\.com/i.test(html);
+const isAudioEmbed = (html) => {
+  if (!html || typeof html !== "string") return false;
+  return /soundcloud\.com|bandcamp\.com|spotify\.com|music\.apple\.com|<audio/i.test(
+    html
+  );
 };
 
 const ProjectDetail = ({ project, category = "projects", lang }) => {
@@ -387,20 +390,20 @@ const ProjectDetail = ({ project, category = "projects", lang }) => {
             <div className={styles.mediaGallerySection}>
               <h2 className={styles.gallerySectionHeading}>Project Media & Visuals</h2>
               <div className={styles.galleryList}>
-                {/* Embedded Media (Videos, Audio Players, Widgets) */}
+                {/* Embedded Media (Interactive Demos, Videos, Audio Players) */}
                 {embeds.map((embedHtml, index) => {
-                  const isVideo = isVideoEmbed(embedHtml);
+                  const isAudio = isAudioEmbed(embedHtml);
                   return (
                     <div
                       key={`embed-${index}`}
                       className={
-                        isVideo
-                          ? styles.galleryEmbedVideoWrapper
-                          : styles.galleryEmbedAudioWrapper
+                        isAudio
+                          ? styles.galleryEmbedAudioWrapper
+                          : styles.galleryEmbedVideoWrapper
                       }
                     >
                       <div
-                        className={isVideo ? styles.embedVideo : styles.embedAudio}
+                        className={isAudio ? styles.embedAudio : styles.embedVideo}
                         dangerouslySetInnerHTML={{
                           __html: cleanEmbedHtml(embedHtml),
                         }}

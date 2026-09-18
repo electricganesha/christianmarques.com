@@ -1,3 +1,11 @@
+.blogCardLargeLink {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
 .blogCardLargeArticle {
     display: flex;
     flex-direction: column;
@@ -6,6 +14,7 @@
     width: 100%;
     padding: 0 1rem;
     box-sizing: border-box;
+    cursor: pointer;
 }
 
 .blogCardLargeArticle.reversed {
@@ -198,7 +207,8 @@
     font-size: 1.5rem;
     font-weight: 500;
     color: var(--foreground, #222);
-    transition: color 0.2s;
+    cursor: pointer;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
 
 @media (min-width: 768px) {
@@ -209,7 +219,10 @@
 
 .blogCardLargeLink:hover .blogCardLargeTitle,
 .blogCardLargeLink:focus .blogCardLargeTitle {
-    color: rgba(34, 34, 34, 0.8);
+    color: #444444;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1.5px;
 }
 
 .blogCardLargeDescription {

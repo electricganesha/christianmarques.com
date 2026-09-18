@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import styles from "./BlogCard.module.scss";
@@ -49,7 +48,7 @@ const BlogCard = ({ post: blogItem, index, reversed }) => {
   const isPriority = index === 0;
 
   return (
-    <Link
+    <a
       href={blogItem.link}
       className={styles.blogCardLargeLink}
       target="_blank"
@@ -137,7 +136,7 @@ const BlogCard = ({ post: blogItem, index, reversed }) => {
           </div>
         </div>
       </article>
-    </Link>
+    </a>
   );
 };
 

@@ -551,11 +551,15 @@
   overflow: hidden;
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   border-radius: 4px;
   border: 1px solid #eaeaea;
   background-color: #000000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  @media (min-width: 768px) {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 .embed,
